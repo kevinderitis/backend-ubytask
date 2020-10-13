@@ -9,7 +9,6 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    console.log(req.body);
     const { nombre, apellido } = req.body;
     if (nombre && apellido) {
         const newUser = { ...req.body};

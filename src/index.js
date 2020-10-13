@@ -16,6 +16,7 @@ app.use(express.json());
 app.use(require('./routes/index'));
 app.use('/api/usuarios',require('./routes/usuarios'));
 app.use('/api/solicitudes', require('./routes/solicitudes'));
+app.use('/api/auth', require('./routes/auth'));
 
 //Starting server
 app.listen(app.get('port'), () =>{
