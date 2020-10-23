@@ -2,6 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const jwt = require('jsonwebtoken');
 const { user } = require('../database');
+const { validarToken, validarRolAdmin } = require('../controllers/authController');
 
 router.post('/login', async (req, res) => {
     const usuario = await user.findAll({
@@ -12,7 +13,7 @@ router.post('/login', async (req, res) => {
         res.sendStatus(403);
     } else {
 
-        jwt.sign({ usuario }, 'secretkey', (err, token) => {
+        jwt.sign({ usuario }, 'secretkey' ,(err, token) => {
             res.json({
                 token
             });
@@ -36,17 +37,7 @@ router.get('/', validarToken, (req, res) => {
 
 });
 
-function validarToken(req, res, next) {
-    const bearerHeader = req.headers['authorization'];
-    if (typeof bearerHeader !== 'undefined') {
-        const bearer = bearerHeader.split(' ');
-        const bearerToken = bearer[1];
-        req.token = bearerToken;
-        next();
-    } else {
-        res.sendStatus(403);
-    }
-}
+
 
 
 module.exports = router;

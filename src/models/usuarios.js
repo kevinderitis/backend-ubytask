@@ -3,11 +3,16 @@ module.exports = (sequelize, type) => {
         id: {
             type: type.INTEGER,
             primaryKey: true,
-            autoincrement: true
+            autoincrement: true,
+         
+            
         },
         nombre: type.STRING,
         apellido: type.STRING,
-        mail: type.STRING
+        mail: type.STRING,
+        contraseña: type.STRING,
+        rol: type.INTEGER
+
 
     })
 
