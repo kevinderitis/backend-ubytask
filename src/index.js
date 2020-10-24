@@ -5,7 +5,7 @@ const sql = require('mssql');
 
 
 //Settings
-app.set('port', process.env.port || 3977);
+app.set('port', process.env.PORT || 3977);
 
 //Middlewares
 app.use(morgan('dev'));
