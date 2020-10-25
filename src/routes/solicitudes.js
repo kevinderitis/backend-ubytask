@@ -12,7 +12,12 @@ router.post('/', async (req, res) => {
     const { customer, categoria, ubicacion, descripcion } = req.body;
     if (customer && categoria && ubicacion && descripcion) {
         const newSolicitud = { ...req.body };
-        const sol = solicitud.create(newSolicitud);
+        try {
+            const sol = await solicitud.create(newSolicitud);
+        } catch (error) {
+            console.log(error);
+        }
+
         res.json(newSolicitud);
     } else {
         res.status(500).json({ "error": "Hubo un error al cargar la solicitud" });
@@ -38,9 +43,9 @@ router.delete('/:idSol', async (req, res) => {
         await solicitud.destroy({
             where: { id: idSol }
         });
-        res.json({ success: "Se ha eliminado la solicitud"})
-    }else{
-        res.status(500).json({"error": "Hubo un error al eliminar solicitud."})
+        res.json({ success: "Se ha eliminado la solicitud" })
+    } else {
+        res.status(500).json({ "error": "Hubo un error al eliminar solicitud." })
     }
 });
 

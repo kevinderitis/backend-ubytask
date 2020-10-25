@@ -10,7 +10,10 @@ module.exports = (sequelize, type) => {
         ubicacion: type.STRING,
         descripcion: type.STRING,
         estado: type.INTEGER,
-        tasker: type.INTEGER
+        tasker: {
+            type: type.INTEGER,
+            allowNull: true
+        }
 
     })
 

@@ -20,6 +20,6 @@ app.use('/api/auth', require('./routes/auth'));
 
 //Starting server
 app.listen(app.get('port'), () =>{
-console.log('Server on port 3000');
+console.log('Server on port');
 });
 

@@ -4,7 +4,7 @@ const { user } = require('../database');
 const { validarToken, validarRolAdmin } = require('../controllers/authController');
 
 
-router.get('/', validarToken, validarRolAdmin,  async (req, res) => {
+router.get('/', validarToken, validarRolAdmin, async (req, res) => {
     const usuarios = await user.findAll();
     res.json(usuarios);
 });
@@ -13,7 +13,12 @@ router.post('/', validarToken, validarRolAdmin, (req, res) => {
     const { nombre, apellido, mail, contraseña, rol } = req.body;
     if (nombre && apellido && mail && contraseña && rol) {
         const newUser = { ...req.body };
-        const usuarios = user.create(newUser);
+        try {
+            const usuarios = user.create(newUser);
+        } catch (error) {
+            console.log(error);
+        }
+
         res.json(newUser);
 
     } else {
