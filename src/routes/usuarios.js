@@ -9,12 +9,15 @@ router.get('/', validarToken, validarRolAdmin, async (req, res) => {
     res.json(usuarios);
 });
 
-router.post('/', validarToken, validarRolAdmin, (req, res) => {
+router.post('/', validarToken, validarRolAdmin, async (req, res) => {
     const { nombre, apellido, mail, contraseña, rol } = req.body;
     if (nombre && apellido && mail && contraseña && rol) {
         const newUser = { ...req.body };
         try {
-            const usuarios = user.create(newUser);
+            const idUsuarioProv = await user.max('id');
+            const idUsuarioDef = idUsuarioProv + 1;
+            newUser.id = idUsuarioDef;
+            const usuarios = await user.create(newUser);
         } catch (error) {
             console.log(error);
         }
