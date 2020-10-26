@@ -13,6 +13,9 @@ router.post('/', async (req, res) => {
     if (customer && categoria && ubicacion && descripcion) {
         const newSolicitud = { ...req.body };
         try {
+            const idSolProv = await solicitud.max('id');
+            const idSolDef = idSolProv + 1;
+            newSolicitud.id = idSolDef;
             const sol = await solicitud.create(newSolicitud);
         } catch (error) {
             console.log(error);
