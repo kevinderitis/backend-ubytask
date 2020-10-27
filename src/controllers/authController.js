@@ -36,4 +36,22 @@ if(req.rol === 1){
 
 }
 
-module.exports = {validarToken, validarRolAdmin};
+function  validarRolTasker(req, res,next) {
+    if(req.rol === 2 || req.rol ===1){
+        next();
+    }else{
+        res.sendStatus(400);
+    }
+    
+    }
+
+    function  validarRolCustomer(req, res,next) {
+        if(req.rol === 3 || req.rol ===1){
+            next();
+        }else{
+            res.sendStatus(400);
+        }
+        
+        }
+
+module.exports = {validarToken, validarRolAdmin, validarRolCustomer, validarRolTasker};
