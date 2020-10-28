@@ -7,7 +7,8 @@ module.exports = (sequelize, type) => {
         },
         customer: type.INTEGER,
         categoria: type.STRING,
-        ubicacion: type.STRING,
+        latitud: type.STRING,
+        longitud: type.STRING,
         descripcion: type.STRING,
         estado: type.INTEGER,
         tasker: {
