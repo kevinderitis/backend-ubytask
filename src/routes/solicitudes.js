@@ -9,8 +9,8 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { customer, categoria, ubicacion, descripcion, latitud, longitud } = req.body;
-    if (customer && categoria && ubicacion && descripcion && latitud && longitud) {
+    const { customer, categoria, descripcion, latitud, longitud } = req.body;
+    if (customer && categoria && descripcion && latitud && longitud) {
         const newSolicitud = { ...req.body };
         try {
             const idSolProv = await solicitud.max('id');

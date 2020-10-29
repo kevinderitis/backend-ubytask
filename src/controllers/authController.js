@@ -15,10 +15,7 @@ function validarToken(req, res, next) {
         if (err) {
             res.sendStatus(403);
         } else {
-            // res.json({
-            //     message: 'Token validado',
-            //     authData
-            // });
+        
             req.rol = authData.usuario[0].rol;
            
             next();
