@@ -23,8 +23,8 @@ router.post('/', async (req, res) => {
 
         res.json(newSolicitud);
     } else {
-        //res.status(500).json({ "error": "Hubo un error al cargar la solicitud" });
-        res.send('El error esta aca.');
+        res.status(500).json({ "error": "Hubo un error al cargar la solicitud" });
+        
     }
 });
 
