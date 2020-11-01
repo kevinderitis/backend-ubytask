@@ -13,7 +13,7 @@ function validarToken(req, res, next) {
 
     jwt.verify(req.token, 'secretkey', (err, authData) => {
         if (err) {
-            res.sendStatus(403);
+            res.send({"rc":0, "msg": "token invalido"});
         } else {
         
             req.rol = authData.usuario[0].rol;
@@ -28,7 +28,7 @@ function  validarRolAdmin(req, res,next) {
 if(req.rol === 1){
     next();
 }else{
-    res.sendStatus(400);
+    res.send({"rc": 1 , "msg": "No tiene permisos para acceder a estar ruta."});
 }
 
 }
@@ -37,7 +37,7 @@ function  validarRolTasker(req, res,next) {
     if(req.rol === 2 || req.rol ===1){
         next();
     }else{
-        res.sendStatus(400);
+        res.send({"rc": 1 , "msg": "No tiene permisos para acceder a estar ruta."});
     }
     
     }
@@ -46,7 +46,7 @@ function  validarRolTasker(req, res,next) {
         if(req.rol === 3 || req.rol ===1){
             next();
         }else{
-            res.sendStatus(400);
+            res.send({"rc": 1 , "msg": "No tiene permisos para acceder a estar ruta."});
         }
         
         }

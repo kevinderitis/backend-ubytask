@@ -2,6 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const fetch = require('node-fetch');
 const { solicitud } = require('../database');
+const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 
 router.get('/', async (req, res) => {
     const solicitudes = await solicitud.findAll();
@@ -23,7 +24,7 @@ router.post('/', async (req, res) => {
 
         res.json(newSolicitud);
     } else {
-        res.status(500).json({ "error": "Hubo un error al cargar la solicitud" });
+        res.send({"rc": 3 , "msg": "Error al cargar solicitud, compruebe los datos."});
         
     }
 });
@@ -37,7 +38,7 @@ router.put('/:idSol', async (req, res) => {
         });
         res.json({ success: "Se ha modificado solicitud." })
     } else {
-        res.status(500).json({ "error": "Hubo un error al cargar la solicitud" });
+        res.send({"rc": 3 , "msg": "Error al modificar solicitud, compruebe los datos."});
     }
 });
 
@@ -49,7 +50,7 @@ router.delete('/:idSol', async (req, res) => {
         });
         res.json({ success: "Se ha eliminado la solicitud" })
     } else {
-        res.status(500).json({ "error": "Hubo un error al eliminar solicitud." })
+        res.send({"rc": 3 , "msg": "Error al eliminar solicitud."});
     }
 });
 
