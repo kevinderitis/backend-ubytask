@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 const userModel = require('./models/usuarios');
 const solicitudes = require('./models/solicitudes');
+const categorias = require('./models/categorias');
 
 
 const sequelize = new Sequelize('ubytask', 'sa', 'Vadigu2020DEV', {
@@ -28,6 +29,7 @@ const sequelize = new Sequelize('ubytask', 'sa', 'Vadigu2020DEV', {
 
 const user = userModel(sequelize, Sequelize);
 const solicitud = solicitudes(sequelize, Sequelize);
+const categoria = categorias(sequelize, Sequelize);
 sequelize.sync({force: false})
 .then(()=>{
   console.log('Tablas sincronizadas');
@@ -37,7 +39,8 @@ sequelize.sync({force: false})
 
 module.exports = {
   user,
-  solicitud
+  solicitud,
+  categoria
 };
 
 

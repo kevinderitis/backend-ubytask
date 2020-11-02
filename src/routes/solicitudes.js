@@ -9,6 +9,10 @@ router.get('/', async (req, res) => {
     res.json(solicitudes);
 });
 
+router.get('/solTasker', (req,res) =>{
+
+});
+
 router.post('/', async (req, res) => {
     const { customer, categoria, descripcion, latitud, longitud } = req.body;
     if (customer && categoria && descripcion && latitud && longitud) {
