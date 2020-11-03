@@ -17,7 +17,7 @@ router.get('/solTasker/:idTasker', async (req, res) => {
     res.json(solicitudes);
 });
 
-router.post('/',validarToken, async (req, res) => {
+router.post('/', async (req, res) => {
     const { customer, categoria, descripcion, latitud, longitud } = req.body;
     if (customer && categoria && descripcion && latitud && longitud) {
         const newSolicitud = { ...req.body };
