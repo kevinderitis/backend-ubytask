@@ -9,8 +9,12 @@ router.get('/', async (req, res) => {
     res.json(solicitudes);
 });
 
-router.get('/solTasker', (req,res) =>{
-
+router.get('/solTasker/:idTasker', async (req, res) => {
+    const idtask = req.params.idTasker;
+    const solicitudes = await solicitud.findAll({
+        where: { tasker: idtask }
+    });
+    res.json(solicitudes);
 });
 
 router.post('/', async (req, res) => {
@@ -29,8 +33,8 @@ router.post('/', async (req, res) => {
 
         res.json(newSolicitud);
     } else {
-        res.send({"rc": 3 , "msg": "Error al cargar solicitud, compruebe los datos."});
-        
+        res.send({ "rc": 3, "msg": "Error al cargar solicitud, compruebe los datos." });
+
     }
 });
 
@@ -43,7 +47,7 @@ router.put('/:idSol', async (req, res) => {
         });
         res.json({ success: "Se ha modificado solicitud." })
     } else {
-        res.send({"rc": 3 , "msg": "Error al modificar solicitud, compruebe los datos."});
+        res.send({ "rc": 3, "msg": "Error al modificar solicitud, compruebe los datos." });
     }
 });
 
@@ -55,7 +59,7 @@ router.delete('/:idSol', async (req, res) => {
         });
         res.json({ success: "Se ha eliminado la solicitud" })
     } else {
-        res.send({"rc": 3 , "msg": "Error al eliminar solicitud."});
+        res.send({ "rc": 3, "msg": "Error al eliminar solicitud." });
     }
 });
 
