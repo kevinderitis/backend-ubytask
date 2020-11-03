@@ -21,6 +21,7 @@ router.post('/', async (req, res) => {
             const idSolProv = await solicitud.max('id');
             const idSolDef = idSolProv + 1;
             newSolicitud.id = idSolDef;
+            newSolicitud.estado = 1;
             const sol = await solicitud.create(newSolicitud);
         } catch (error) {
             console.log(error);
