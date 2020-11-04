@@ -9,6 +9,10 @@ router.get('/', validarToken, validarRolAdmin, async (req, res) => {
     res.json(usuarios);
 });
 
+// agregar get user por mail
+
+// ingresar como tasker (enviar confirmacion de que es tasker y authdata)
+
 router.post('/', validarToken, validarRolAdmin, async (req, res) => {
     const { nombre, apellido, mail, contraseña, rol } = req.body;
     if (nombre && apellido && mail && contraseña && rol) {

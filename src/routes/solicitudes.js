@@ -17,6 +17,10 @@ router.get('/solTasker/:idTasker', async (req, res) => {
     res.json(solicitudes);
 });
 
+// agregar get para solicitud pendientes de una categoria en particular
+// agregar put para modificar estado
+// validacion por si ya esta en estado activo o cancelado la solicitud
+
 router.post('/', async (req, res) => {
     const { customer, categoria, descripcion, latitud, longitud } = req.body;
     if (customer && categoria && descripcion && latitud && longitud) {
@@ -28,7 +32,7 @@ router.post('/', async (req, res) => {
             newSolicitud.estado = 1;
             const sol = await solicitud.create(newSolicitud);
         } catch (error) {
-            console.log(error);
+           res.send(error);
         }
 
         res.json(newSolicitud);
