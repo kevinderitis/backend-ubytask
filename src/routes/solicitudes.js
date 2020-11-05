@@ -3,6 +3,7 @@ const router = Router();
 const fetch = require('node-fetch');
 const { solicitud } = require('../database');
 const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
+const solicitudes = require('../models/solicitudes');
 
 router.get('/', async (req, res) => {
     const solicitudes = await solicitud.findAll();
@@ -17,10 +18,22 @@ router.get('/solTasker/:idTasker', async (req, res) => {
     res.json(solicitudes);
 });
 
-// agregar get para solicitud pendientes de una categoria en particular
+
+router.get('/categorias/:id', async (req, res) => {
+    const idcategoria = req.params.id;
+    let solicitudes = "";
+    try {
+        solicitudes = await solicitud.findAll({
+            where: { categoria: idcategoria }
+        });
+    } catch (error) {
+        res.send(error);
+    }
+    res.json(solicitudes);
+});
+
 // agregar put para modificar estado
 // validacion por si ya esta en estado activo o cancelado la solicitud
-
 router.post('/', async (req, res) => {
     const { customer, categoria, descripcion, latitud, longitud } = req.body;
     if (customer && categoria && descripcion && latitud && longitud) {
@@ -32,7 +45,7 @@ router.post('/', async (req, res) => {
             newSolicitud.estado = 1;
             const sol = await solicitud.create(newSolicitud);
         } catch (error) {
-           res.send(error);
+            res.send(error);
         }
 
         res.json(newSolicitud);
@@ -44,8 +57,8 @@ router.post('/', async (req, res) => {
 
 router.put('/:idSol', async (req, res) => {
     const idSol = req.params.idSol;
-    const { customer, categoria, ubicacion, descripcion } = req.body;
-    if (customer && categoria && ubicacion && descripcion) {
+    const { customer, categoria, ubicacion, descripcion, estado } = req.body;
+    if (customer && categoria && ubicacion && descripcion && estado) {
         await solicitud.update(req.body, {
             where: { id: idSol }
         });
