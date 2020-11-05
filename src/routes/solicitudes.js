@@ -136,4 +136,10 @@ router.delete('/:idSol', async (req, res) => {
     }
 });
 
+router.get('/:idCustomer', async (req, res) => {
+    const idCustomer = req.params.idCustomer;
+    const solicitudes = await solicitud.findAll({ where: { customer: idCustomer, estado: 1 } })
+    res.json(solicitudes);
+});
+
 module.exports = router;
