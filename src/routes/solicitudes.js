@@ -32,7 +32,6 @@ router.get('/categorias/:id', async (req, res) => {
     res.json(solicitudes);
 });
 
-// agregar put para modificar estado
 // validacion por si ya esta en estado activo o cancelado la solicitud
 router.post('/', async (req, res) => {
     const { customer, categoria, descripcion, latitud, longitud } = req.body;
@@ -58,19 +57,71 @@ router.post('/', async (req, res) => {
 router.put('/:idSol', async (req, res) => {
     const idSol = req.params.idSol;
     const { customer, categoria, descripcion, latitud, longitud, estado } = req.body;
-    if (estado) {
-        try {
-            await solicitud.update(req.body, {
-                where: { id: idSol }
-            });
-            res.json({ success: "Se ha modificado solicitud." })
-        } catch (error) {
-            res.json({ "rc": 3, "msg": "Error de conexion" })
-        }
+    const result = await solicitud.findAll({
+        where: { id: idSol }
+    });
+    const estadoactual = result[0].estado;
+    switch (estado) {
 
-    } else {
-        res.send({ "rc": 3, "msg": "Error al modificar solicitud, compruebe los datos." });
+        case 2:
+            if (estadoactual === 1 || estadoactual === 4) {
+                try {
+                    await solicitud.update(req.body, {
+                        where: { id: idSol }
+                    });
+                    res.json({ success: "Se ha modificado solicitud." })
+                } catch (error) {
+                    res.json({ "rc": 3, "msg": "Error de conexion" })
+                }
+            } else {
+                res.json({ "rc": "No se puede modificar el estado" })
+            }
+
+            break;
+        case 3:
+            if (estadoactual === 2) {
+                try {
+                    await solicitud.update(req.body, {
+                        where: { id: idSol }
+                    });
+                    res.json({ success: "Se ha modificado solicitud." })
+                } catch (error) {
+                    res.json({ "rc": 3, "msg": "Error de conexion" })
+                }
+            } else {
+                res.json({ "rc": "No se puede modificar el estado" })
+            }
+
+            break;
+        case 4:
+            try {
+                await solicitud.update(req.body, {
+                    where: { id: idSol }
+                });
+                res.json({ success: "Se ha modificado solicitud." })
+            } catch (error) {
+                res.json({ "rc": 3, "msg": "Error de conexion" })
+            }
+
+            break;
+
+        default:
+            res.json({ "rc": "No se puede modificar el estado" })
+            break;
     }
+    // if (estado) {
+    // try {
+    //     await solicitud.update(req.body, {
+    //         where: { id: idSol }
+    //     });
+    //     res.json({ success: "Se ha modificado solicitud." })
+    // } catch (error) {
+    //     res.json({ "rc": 3, "msg": "Error de conexion" })
+    // }
+
+    // } else {
+    //     res.send({ "rc": 3, "msg": "Error al modificar solicitud, compruebe los datos." });
+    // }
 });
 
 router.delete('/:idSol', async (req, res) => {
