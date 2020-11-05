@@ -57,12 +57,17 @@ router.post('/', async (req, res) => {
 
 router.put('/:idSol', async (req, res) => {
     const idSol = req.params.idSol;
-    const { customer, categoria, ubicacion, descripcion, estado } = req.body;
-    if (customer && categoria && ubicacion && descripcion && estado) {
-        await solicitud.update(req.body, {
-            where: { id: idSol }
-        });
-        res.json({ success: "Se ha modificado solicitud." })
+    const { customer, categoria, descripcion, latitud, longitud, estado } = req.body;
+    if (estado) {
+        try {
+            await solicitud.update(req.body, {
+                where: { id: idSol }
+            });
+            res.json({ success: "Se ha modificado solicitud." })
+        } catch (error) {
+            res.json({ "rc": 3, "msg": "Error de conexion" })
+        }
+
     } else {
         res.send({ "rc": 3, "msg": "Error al modificar solicitud, compruebe los datos." });
     }
