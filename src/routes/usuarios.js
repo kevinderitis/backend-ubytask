@@ -66,7 +66,7 @@ router.put('/:idUser', validarToken, async (req, res) => {
 
 });
 
-// ingresar como tasker (enviar confirmacion de que es tasker)
+// ingresar como tasker (enviar confirmacion de que es tasker) pru
 
 router.get('/ingresatasker/:iduser', async (req, res) => {
     const iduser = req.params.iduser;
