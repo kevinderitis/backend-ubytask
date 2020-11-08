@@ -11,7 +11,7 @@ router.get('/', validarToken, validarRolAdmin, async (req, res) => {
 
 // agregar get user por mail
 
-// ingresar como tasker (enviar confirmacion de que es tasker y authdata)
+
 
 router.post('/', validarToken, validarRolAdmin, async (req, res) => {
     const { nombre, apellido, mail, contraseña, rol } = req.body;
@@ -33,6 +33,9 @@ router.post('/', validarToken, validarRolAdmin, async (req, res) => {
     }
 
 });
+
+
+
 
 router.delete('/:idUser', validarToken, validarRolAdmin, async (req, res) => {
     const idUsuario = req.params.idUser;
@@ -62,5 +65,21 @@ router.put('/:idUser', validarToken, async (req, res) => {
 
 
 });
+
+// ingresar como tasker (enviar confirmacion de que es tasker y authdata)
+
+router.get('/ingresatasker/:iduser', async (req, res) => {
+    const iduser = req.params.iduser;
+    const usuario = await user.findAll({
+        where: { "id": iduser }
+    })
+
+    if (Object.entries(usuario).length > 0 && (usuario.rol === 2 || usuario.rol === 3)) {
+        res.json(usuario);
+    } else {
+        res.json({ "rc": 1, "msg": "No es tasker" });
+    }
+});
+
 
 module.exports = router;

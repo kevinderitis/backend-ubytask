@@ -5,7 +5,6 @@ const { user } = require('../database');
 const { validarToken, validarRolAdmin } = require('../controllers/authController');
 
 
-// modificar para hacer registro directamente con los datos
 
 router.post('/login', async (req, res) => {
     const usuario = await user.findAll({
