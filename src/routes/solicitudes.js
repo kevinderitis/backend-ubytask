@@ -200,11 +200,12 @@ router.get('/:mailCustomer', async (req, res) => {
     const usuario = await findAll({
         where: { "mail": mailCustomer }
     });
-
+    console.log(usuario);
     // const solicitudes = await solicitud.findAll({where: {customer: idCustomer} [and] {[estado.in]:[1,2]}})
     const solicitudes = await solicitud.findAll({
-        where: usuario[0].id
+        where: {"id": usuario[0].id}
     });
+    console.log(solicitudes);
     res.json(solicitudes);
 });
 
