@@ -195,4 +195,17 @@ router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
     }
 });
 
+router.get('/:mailCustomer', async (req, res) => {
+    const mailCustomer = req.params.mailCustomer;
+    const usuario = await findAll({
+        where: { "mail": mailCustomer }
+    });
+
+    // const solicitudes = await solicitud.findAll({where: {customer: idCustomer} [and] {[estado.in]:[1,2]}})
+    const solicitudes = await solicitud.findAll({
+        where: usuario[0].id
+    });
+    res.json(solicitudes);
+});
+
 module.exports = router;
