@@ -32,7 +32,7 @@ router.get('/categorias/:id', async (req, res) => {
     res.json(solicitudes);
 });
 
-// validacion por si ya esta en estado activo o cancelado la solicitud
+
 router.post('/', async (req, res) => {
     const { customer, categoria, descripcion, latitud, longitud } = req.body;
     if (customer && categoria && descripcion && latitud && longitud) {
