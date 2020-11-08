@@ -66,7 +66,7 @@ router.put('/:idUser', validarToken, async (req, res) => {
 
 });
 
-// ingresar como tasker (enviar confirmacion de que es tasker y authdata)
+// ingresar como tasker (enviar confirmacion de que es tasker)
 
 router.get('/ingresatasker/:iduser', async (req, res) => {
     const iduser = req.params.iduser;
@@ -80,6 +80,19 @@ router.get('/ingresatasker/:iduser', async (req, res) => {
         res.json({ "rc": 1, "msg": "No es tasker" });
     }
 });
+
+router.get('/:mailTasker', async (req, res) => {
+    const mailABuscar = req.params.mailTasker
+    const tasker = await user.findAll({where:{mail:mailABuscar,rol:2}})
+    if(tasker.length > 0){
+        // res.json(tasker);
+        res.json({rta:true,idTasker:tasker[0].id});
+    } else {
+        // res.json({msj:'El mail no es de un tasker'})
+        res.json({rta:false});
+    }
+});
+
 
 
 module.exports = router;

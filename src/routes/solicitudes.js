@@ -1,9 +1,11 @@
 const { Router } = require('express');
 const router = Router();
 const fetch = require('node-fetch');
-const { solicitud } = require('../database');
+const { solicitud, taskerCategoria, categoria } = require('../database');
 const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 const solicitudes = require('../models/solicitudes');
+
+
 
 router.get('/', async (req, res) => {
     const solicitudes = await solicitud.findAll();
@@ -54,9 +56,9 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/:idSol', async (req, res) => {
+router.put('/estado/:idSol', async (req, res) => {
     const idSol = req.params.idSol;
-    const { customer, categoria, descripcion, latitud, longitud, estado } = req.body;
+    const { estado } = req.body;
     const result = await solicitud.findAll({
         where: { id: idSol }
     });
@@ -124,7 +126,31 @@ router.put('/:idSol', async (req, res) => {
     // }
 });
 
-router.delete('/:idSol', async (req, res) => {
+router.put('/modificar/:idSol', async (req, res) => {
+    const idSol = req.params.idSol;
+    const solicitudAModificar = solicitud.findAll({ where: { id: idSol } })
+    if (solicitudAModificar) {
+        console.log(req.body)
+        await solicitud.update(
+            {
+                ubicacion: req.body.ubicacion
+                , latitud: req.body.latitud
+                , longitud: req.body.longitud
+                , descripcion: req.body.descripcion
+            },
+            {
+                where: { id: idSol }
+            }
+        );
+        res.json({ success: "Se ha modificado solicitud." })
+    } else {
+        res.send({ "rc": 3, "msg": "Error al modificar solicitud, compruebe los datos." });
+    }
+});
+
+
+
+router.delete('/:idSol', validarRolAdmin, async (req, res) => {
     const idSol = req.params.idSol;
     if (idSol) {
         await solicitud.destroy({
@@ -138,8 +164,35 @@ router.delete('/:idSol', async (req, res) => {
 
 router.get('/:idCustomer', async (req, res) => {
     const idCustomer = req.params.idCustomer;
-    const solicitudes = await solicitud.findAll({ where: { customer: idCustomer, estado: 1 } })
+    const solicitudes = await solicitud.findAll({ where: { customer: idCustomer } })
     res.json(solicitudes);
+});
+
+// Me tiene que devolver las solicitudes con mis servicios
+// Modificar para hacer una sola vez las consultas
+router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
+    const idTasker = req.params.idTasker;
+    //busco el id del tasker en la tabla taskerCategorias, recibo las categorias del tasker
+    //busco las solicitudes con estado 1 y de categoria igual a las que recibí recién
+    const categoriasDelTasker = await taskerCategoria.findAll({ where: { idTasker: idTasker } })
+    // console.log(categoriasDelTasker)
+    var solicitudesParaElTasker = []
+    if (categoriasDelTasker.length > 0) {
+        for (let i = 0; i < categoriasDelTasker.length; i++) {
+            let cat = await categoria.findAll({ where: { id: categoriasDelTasker[i].idCategoria } })
+            // console.log(cat)
+            const soli = await solicitud.findAll({ where: { [Op.and]: [{ estado: 1 }, { categoria: cat[0].nombre }] } })
+            // console.log(soli[0])
+            solicitudesParaElTasker.push(soli[0])
+        }
+        if (solicitudesParaElTasker.length > 0) {
+            res.json({ rta: 200, solicitudes: solicitudesParaElTasker })
+        } else {
+            res.json({ rta: 201, solicitudes: solicitudesParaElTasker })
+        }
+    } else {
+        res.json({ rta: 'No hay categorias para este tasker' })
+    }
 });
 
 module.exports = router;
