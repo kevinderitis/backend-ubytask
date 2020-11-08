@@ -4,6 +4,8 @@ const fetch = require('node-fetch');
 const { solicitud } = require('../database');
 const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 const {Op} = require('sequelize')
+const { taskerCategoria } = require('../database');
+const { categoria } = require('../database');
 
 router.get('/', async (req, res) => {
     const solicitudes = await solicitud.findAll();
@@ -47,6 +49,9 @@ router.put('/:idSol', async (req, res) => {
         await solicitud.update({estado:req.body.estado}, {
             where: { id: idSol }
         });
+        await solicitud.update({tasker:req.body.idTasker}, {
+            where: { id: idSol }
+        })
         res.json({ success: "Se ha modificado solicitud." })
     } else {
         res.send({ "rc": 3, "msg": "Error al modificar solicitud, compruebe los datos." });
@@ -94,6 +99,32 @@ router.get('/:idCustomer', async (req, res) => {
     // const solicitudes = await solicitud.findAll({where: {customer: idCustomer} [and] {[estado.in]:[1,2]}})
     const solicitudes = await solicitud.findAll({where:{[Op.and]:[{customer:idCustomer},{[Op.or]:[{estado:1},{estado:2}]}]}})
     res.json(solicitudes);
+});
+
+// Me tiene que devolver las solicitudes con mis servicios
+router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
+    const idTasker = req.params.idTasker;
+    //busco el id del tasker en la tabla taskerCategorias, recibo las categorias del tasker
+    //busco las solicitudes con estado 1 y de categoria igual a las que recibí recién
+    const categoriasDelTasker = await taskerCategoria.findAll({where:{idTasker:idTasker}})
+    // console.log(categoriasDelTasker)
+    var solicitudesParaElTasker = []
+    if(categoriasDelTasker.length > 0){
+        for(let i = 0 ; i < categoriasDelTasker.length ; i++){
+            let cat = await categoria.findAll({where:{id:categoriasDelTasker[i].idCategoria}})
+            // console.log(cat)
+            const soli = await solicitud.findAll({where:{[Op.and]:[{estado:1},{categoria:cat[0].nombre}]}})
+            // console.log(soli[0])
+            solicitudesParaElTasker.push(soli[0])
+        }
+        if(solicitudesParaElTasker.length > 0){
+            res.json({rta:200,solicitudes:solicitudesParaElTasker})
+        } else {
+            res.json({rta:201,solicitudes:solicitudesParaElTasker})
+        }
+    } else {
+        res.json({rta:'No hay categorias para este tasker'})
+    }
 });
 router.get('/:mailCustomer', async (req, res) => {
     const mailCustomer = req.params.mailCustomer;
