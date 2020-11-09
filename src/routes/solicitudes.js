@@ -68,7 +68,8 @@ router.put('/estado/:idSol', async (req, res) => {
         case 2:
             if (estadoactual === 1 || estadoactual === 4) {
                 try {
-                    await solicitud.update(req.body, {
+                    // await solicitud.update(req.body, {
+                    await solicitud.update({estado:req.body.estado}, {
                         where: { id: idSol }
                     });
                     res.json({ success: "Se ha modificado solicitud." })
@@ -83,7 +84,8 @@ router.put('/estado/:idSol', async (req, res) => {
         case 3:
             if (estadoactual === 2) {
                 try {
-                    await solicitud.update(req.body, {
+                    // await solicitud.update(req.body, {
+                    await solicitud.update({estado:req.body.estado}, {
                         where: { id: idSol }
                     });
                     res.json({ success: "Se ha modificado solicitud." })
