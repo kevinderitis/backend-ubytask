@@ -97,7 +97,8 @@ router.put('/estado/:idSol', async (req, res) => {
             break;
         case 4:
             try {
-                await solicitud.update(req.body, {
+                // await solicitud.update(req.body, {
+                await solicitud.update({estado:req.body.estado}, {
                     where: { id: idSol }
                 });
                 res.json({ success: "Se ha modificado solicitud." })
