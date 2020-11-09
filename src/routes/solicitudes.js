@@ -59,10 +59,13 @@ router.post('/', async (req, res) => {
 router.put('/estado/:idSol', async (req, res) => {
     const idSol = req.params.idSol;
     const { estado } = req.body;
+    
+
     const result = await solicitud.findAll({
         where: { id: idSol }
     });
     const estadoactual = result[0].estado;
+    console.log(req.body)
     switch (estado) {
 
         case 2:
@@ -70,6 +73,9 @@ router.put('/estado/:idSol', async (req, res) => {
                 try {
                     // await solicitud.update(req.body, {
                     await solicitud.update({estado:req.body.estado}, {
+                        where: { id: idSol }
+                    });
+                    await solicitud.update({tasker:req.body.idTasker}, {
                         where: { id: idSol }
                     });
                     res.json({ success: "Se ha modificado solicitud." })
