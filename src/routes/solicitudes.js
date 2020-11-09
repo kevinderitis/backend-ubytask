@@ -171,6 +171,17 @@ router.get('/:idCustomer', async (req, res) => {
     res.json(solicitudes);
 });
 
+ //  SOLITUDES EN ESTADO 1 2 y 3 : PENDIENTE , CON TASKER  y FINALIZADA 
+router.get('/pendientes/:idCustomer', async (req, res) => {
+    const idCustomer = req.params.idCustomer;
+    // const solicitudes = await solicitud.findAll({ where: { customer: idCustomer } })
+    const solicitudes = await solicitud.findAll( { where: { [Op.and]: [ { estado: {[Op.in]: [1,2,3] } }, { customer: idCustomer }] } })
+    res.json(solicitudes);
+});
+
+
+
+
 // Me tiene que devolver las solicitudes con mis servicios
 // Modificar para hacer una sola vez las consultas
 router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
