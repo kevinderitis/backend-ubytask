@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const { solicitud, taskerCategoria, categoria } = require('../database');
 const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 const solicitudes = require('../models/solicitudes');
-
+const { Op } = require("sequelize")
 
 
 router.get('/', async (req, res) => {
@@ -184,7 +184,7 @@ router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
             // console.log(cat)
             const soli = await solicitud.findAll({ where: { [Op.and]: [{ estado: 1 }, { categoria: cat[0].nombre }] } })
             // console.log(soli[0])
-            solicitudesParaElTasker.push(soli[0])
+            if(soli[0] != null) solicitudesParaElTasker.push(soli[0])
         }
         if (solicitudesParaElTasker.length > 0) {
             res.json({ rta: 200, solicitudes: solicitudesParaElTasker })
