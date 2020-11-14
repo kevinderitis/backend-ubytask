@@ -36,12 +36,17 @@ router.get('/categorias/:id', async (req, res) => {
 
 
 router.post('/', async (req, res) => {
-    const { customer, categoria, descripcion, latitud, longitud } = req.body;
-    if (customer && categoria && descripcion && latitud && longitud) {
+    const { customer, categoria, descripcion, latitud, longitud, ubicacion } = req.body;
+    if (customer && categoria && descripcion && latitud && longitud && ubicacion) {
         const newSolicitud = { ...req.body };
         try {
             const idSolProv = await solicitud.max('id');
-            const idSolDef = idSolProv + 1;
+            var idSolDef
+            if(!idSolProv){
+                idSolDef = 1;
+            } else {
+                idSolDef = idSolProv + 1;
+            }
             newSolicitud.id = idSolDef;
             newSolicitud.estado = 1;
             const sol = await solicitud.create(newSolicitud);
