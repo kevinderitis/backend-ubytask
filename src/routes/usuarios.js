@@ -2,7 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const { user } = require('../database');
 const { validarToken, validarRolAdmin } = require('../controllers/authController');
-
+const taskerCategoriaService = require('../services/taskerCategoriasService');
 
 router.get('/', validarToken, validarRolAdmin, async (req, res) => {
     const usuarios = await user.findAll();
@@ -34,7 +34,44 @@ router.post('/', validarToken, validarRolAdmin, async (req, res) => {
 
 });
 
+router.post('/tasker', async (req,res) => {
+    const { nombre, apellido, mail, rol, categorias } = req.body;
+    if (nombre && apellido && mail && rol && categorias) {
+        const newUser = {
+            nombre,
+            apellido,
+            mail,
+            contraseña,
+            rol
+        }
+        try {
+            const idUsuarioProv = await user.max('id');
+            const idUsuarioDef = idUsuarioProv + 1;
+            newUser.id = idUsuarioDef;
+            const usuarios = await user.create(newUser);
+            let newTaskerCategoria = {};
+            for (let index = 0; index < categorias.length; index++) {
+                const categoria = categorias[index];
+                newTaskerCategoria = {
+                    idTasker:newUser.id,
+                    idCategoria:categoria
+                }
+                newTaskerCategoria.id = await  taskerCategoriaService.getMaxId() +1
+                const result =  await taskerCategoriaService.crearTaskerCategoria(newTaskerCategoria);
+                    
+            
+            }
+        } catch (error) {
+            console.log(error);
+        }
 
+        res.json("El tasker fue creado con exito!");
+
+    } else {
+        res.status(500).json({ "error": "Hubo un error al cargar tasker" });
+    }
+
+});
 
 
 router.delete('/:idUser', validarToken, validarRolAdmin, async (req, res) => {
