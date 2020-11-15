@@ -118,32 +118,32 @@ router.get('/ingresatasker/:iduser', async (req, res) => {
     }
 });
 
-// router.get('/:mailTasker', async (req, res) => {
-//     const mailABuscar = req.params.mailTasker
-//     const tasker = await user.findAll({where:{mail:mailABuscar,rol:2}})
-//     if(tasker.length > 0){
-//         // res.json(tasker);
-//         res.json({rta:true,idTasker:tasker[0].id});
-//     } else {
-//         // res.json({msj:'El mail no es de un tasker'})
-//         res.json({rta:false});
-//     }
-// });
-
-
-
-router.get('/:mailCustomer', async (req, res) => {
-    console.log(req.params.mailCustomer)
-    const mailABuscar = req.params.mailCustomer
-    const customer = await user.findAll({where:{mail:mailABuscar,rol:1}})
-    if(customer.length > 0){
+router.get('/:mailTasker', async (req, res) => {
+    const mailABuscar = req.params.mailTasker
+    const tasker = await user.findAll({where:{mail:mailABuscar,rol:2}})
+    if(tasker.length > 0){
         // res.json(tasker);
-        res.json({rta:true,idCustomer:customer[0].id});
+        res.json({rta:true,idTasker:tasker[0].id});
     } else {
         // res.json({msj:'El mail no es de un tasker'})
         res.json({rta:false});
     }
 });
+
+
+
+// router.get('/:mailCustomer', async (req, res) => {
+//     console.log(req.params.mailCustomer)
+//     const mailABuscar = req.params.mailCustomer
+//     const customer = await user.findAll({where:{mail:mailABuscar,rol:1}})
+//     if(customer.length > 0){
+//         // res.json(tasker);
+//         res.json({rta:true,idCustomer:customer[0].id});
+//     } else {
+//         // res.json({msj:'El mail no es de un tasker'})
+//         res.json({rta:false});
+//     }
+// });
 
 
 
