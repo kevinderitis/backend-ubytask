@@ -120,10 +120,23 @@ router.get('/ingresatasker/:iduser', async (req, res) => {
 
 router.get('/:mailTasker', async (req, res) => {
     const mailABuscar = req.params.mailTasker
-    const tasker = await user.findAll({where:{mail:mailABuscar,rol:2}})
+    const tasker = await user.findAll({where:{mail:mailABuscar}})
+    
     if(tasker.length > 0){
+        console.log(tasker)
+        for(let i=0; i < tasker.length;i++){
+            if(tasker[i].rol == 2){
+               res.json({rta:true , idTasker:tasker[i].id})
+            }else{
+                if(tasker[i].rol == 3){
+                    res.json({rta:true , idTasker:-1})
+                }
+            }
+
+        }
+        res.json({rta:false });
         // res.json(tasker);
-        res.json({rta:true,idTasker:tasker[0].id});
+       // res.json({rta:true,idTasker:tasker[0].id});
     } else {
         // res.json({msj:'El mail no es de un tasker'})
         res.json({rta:false, });
