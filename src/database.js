@@ -35,7 +35,7 @@ const categoria = categorias(sequelize, Sequelize);
 const estado = estados(sequelize, Sequelize);
 const taskerCategoria = taskerCategorias(sequelize, Sequelize);
 const calificacion = calificaciones(sequelize, Sequelize);
-sequelize.sync({force: true})
+sequelize.sync({force: false})
 .then(()=>{
   console.log('Tablas sincronizadas');
 });
