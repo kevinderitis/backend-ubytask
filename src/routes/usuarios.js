@@ -141,7 +141,7 @@ router.get('/:mailCustomer', async (req, res) => {
         res.json({rta:true,idCustomer:customer[0].id});
     } else {
         // res.json({msj:'El mail no es de un tasker'})
-        res.json({rta:false, idCustomer:0});
+        res.json({rta:false, });
     }
 });
 
