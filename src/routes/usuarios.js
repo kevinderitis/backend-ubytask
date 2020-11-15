@@ -35,7 +35,7 @@ router.post('/', validarToken, validarRolAdmin, async (req, res) => {
 });
 
 router.post('/tasker', async (req,res) => {
-    const { nombre, apellido, mail, rol, categorias } = req.body;
+    const { nombre, apellido, mail, rol, categorias, contraseña } = req.body;
     if (nombre && apellido && mail && rol && categorias) {
         const newUser = {
             nombre,
