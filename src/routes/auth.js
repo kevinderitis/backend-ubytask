@@ -71,7 +71,11 @@ router.post('/signin', async (req, res) => {
 
     if (usuarios.length === 0) {
 
-        nuevoUsuario.id = ultimoid + 1;
+        if(!ultimoid){
+            nuevoUsuario.id = 1;
+        } else {
+            nuevoUsuario.id = ultimoid + 1;
+        }
         nuevoUsuario.nombre = nombre;
         nuevoUsuario.apellido = apellido;
         nuevoUsuario.mail = mail;
