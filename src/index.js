@@ -19,6 +19,7 @@ app.use('/api/categorias',require('./routes/categorias'));
 app.use('/api/solicitudes', require('./routes/solicitudes'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/taskerCategorias', require('./routes/taskerCategorias'));
+app.use('/api/calificaciones', require('./routes/calificaciones'));
 
 //Starting server
 app.listen(app.get('port'), () =>{
