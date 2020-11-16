@@ -1,0 +1,63 @@
+const { direccion } = require('../database');
+
+
+async function createAddress(newAddress){
+    try {
+        const result = await direccion.create(newAddress);
+        return result;  
+    } catch (error) {
+        return error;
+    }
+    
+}
+
+async function updateAddress(updatedAddress){
+    console.log('updatedAdd',updatedAddress);
+    const result = await direccion.update(
+        {
+            idUsuario: updatedAddress.idUsuario,
+            ubicacion: updatedAddress.ubicacion,
+            latitud: updatedAddress.latitud,
+            longitud: updatedAddress.longitud,
+            estado: updatedAddress.estado
+            
+        },
+        {
+            where: { id: updatedAddress.id }
+        }
+    );
+}
+
+async function getAllAddress(){
+    return await direccion.findAll();
+}
+
+async function getActiveAddress(){
+    const activeAddress = await direccion.findOne({
+        where: {
+          estado: 1
+        }
+    });
+    return activeAddress.dataValues;
+}
+
+async function getMaxId(){
+   try {
+    const id = await direccion.max('id');
+    return id
+       
+   } catch (error) {
+        return error 
+   }      
+}
+
+async function disablePreviousAddress(){
+    const oldAddress = await getActiveAddress();
+    if(oldAddress){
+        oldAddress.estado = 0;
+        await updateAddress(oldAddress);
+    }
+}
+
+
+module.exports = {createAddress, getAllAddress, getMaxId, getActiveAddress,updateAddress, disablePreviousAddress};
