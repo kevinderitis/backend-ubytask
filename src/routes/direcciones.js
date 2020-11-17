@@ -6,8 +6,14 @@ const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = 
 const {Op} = require('sequelize')
 const direccionesService = require('../services/direccionesService');
 
-router.get('/', async (req, res) => {
-    const direcciones = await direcciones.findAll();
+router.get('/:idUsuario', async (req, res) => {
+    console.log('iduser', req.params.idUsuario);
+    const direcciones = await direccion.findAll({
+        where: {
+           idUsuario: req.params.idUsuario,
+        }
+    });
+    console.log('direcciones',direcciones);
     res.json(direcciones);
 });
 
