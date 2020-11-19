@@ -19,7 +19,11 @@ router.get('/postulaciones', async (req, res) => {
     const usuarios = await user.findAll({
         where: { rol: 3 }
     });
-    res.json(usuarios);
+    if(usuarios.length > 0){
+        res.json(usuarios);
+    } else {
+        res.json({rta: 'Actualmente no hay postulaciones'})
+    }
 });
 
 // agregar get user por mail
