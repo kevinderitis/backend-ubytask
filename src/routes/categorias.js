@@ -28,4 +28,16 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.delete('/:idCategoria', async (req, res) => {
+    const cat = req.params.idCategoria;
+    if (cat) {
+        await categoria.destroy({
+            where: { id: cat }
+        });
+        res.json({ success: "Se eliminó la categoría" })
+    } else {
+        res.status(500).json({ "error": "Hubo un error al modificar la categoría" });
+    }
+})
+
 module.exports =  router
