@@ -44,21 +44,21 @@ router.put('/:addressId',async (req, res) => {
    const previousAdress = await direccion.findAll({ where: { id: addressId } });
    const ACTIVE = 1;
    if(previousAdress){
-    await direccion.update(
-        {
-            idUsuario: req.body.idUsuario,
-            ubicacion: req.body.ubicacion,
-            latitud: req.body.latitud,
-            longitud: req.body.longitud,
-            estado: ACTIVE
-            
-        },
-        {
-            where: { id: addressId }
-        }
-    );
-    await direccionesService.disablePreviousAddress();
-    res.json({ success: "Se ha modificado solicitud." })
+       await direccionesService.disablePreviousAddress();
+       await direccion.update(
+           {
+               idUsuario: req.body.idUsuario,
+               ubicacion: req.body.ubicacion,
+               latitud: req.body.latitud,
+               longitud: req.body.longitud,
+               estado: ACTIVE
+               
+            },
+            {
+                where: { id: addressId }
+            }
+            );
+    res.json({ success: "Se ha modificado la direccion." })
     } else {
     res.send({ "rc": 3, "msg": "Error al modificar la direccion, compruebe los datos." });
     }
