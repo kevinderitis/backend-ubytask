@@ -12,6 +12,7 @@ module.exports = (sequelize, type) => {
             type: type.STRING,
             allowNull: true
         },
+        calificacion: type.INTEGER
     })
 
 }

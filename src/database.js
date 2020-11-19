@@ -34,7 +34,7 @@ const solicitud = solicitudes(sequelize, Sequelize);
 const categoria = categorias(sequelize, Sequelize);
 const estado = estados(sequelize, Sequelize);
 const taskerCategoria = taskerCategorias(sequelize, Sequelize);
-const calificacion = calificaciones(sequelize, Sequelize);
+const Calificacion = calificaciones(sequelize, Sequelize);
 const direccion = direcciones(sequelize, Sequelize);
 sequelize.sync({force: false})
 .then(()=>{
@@ -48,7 +48,7 @@ module.exports = {
   solicitud,
   categoria,
   taskerCategoria,
-  calificacion,
+  Calificacion,
   direccion
 };
 

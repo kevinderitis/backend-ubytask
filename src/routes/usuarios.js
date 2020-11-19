@@ -4,9 +4,26 @@ const { user } = require('../database');
 const { validarToken, validarRolAdmin } = require('../controllers/authController');
 const taskerCategoriaService = require('../services/taskerCategoriasService');
 
-router.get('/', validarToken, validarRolAdmin, async (req, res) => {
+// router.get('/', validarToken, validarRolAdmin, async (req, res) => {
+//     const usuarios = await user.findAll();
+//     res.json(usuarios);
+// });
+
+router.get('/', async (req, res) => {
     const usuarios = await user.findAll();
     res.json(usuarios);
+});
+
+router.get('/postulaciones', async (req, res) => {
+    // const usuarios = await user.findAll();
+    const usuarios = await user.findAll({
+        where: { rol: 3 }
+    });
+    if(usuarios.length > 0){
+        res.json(usuarios);
+    } else {
+        res.json({rta: 'Actualmente no hay postulaciones'})
+    }
 });
 
 // agregar get user por mail
@@ -86,22 +103,22 @@ router.delete('/:idUser', validarToken, validarRolAdmin, async (req, res) => {
     }
 });
 
-router.put('/:idUser', validarToken, async (req, res) => {
+// router.put('/:idUser', validarToken, async (req, res) => {
 
-    const idUsuario = req.params.idUser;
-    const { nombre, apellido, mail, contraseña, rol } = req.body;
+//     const idUsuario = req.params.idUser;
+//     const { nombre, apellido, mail, contraseña, rol } = req.body;
 
-    if (nombre && apellido && mail && contraseña && rol) {
-        await user.update(req.body, {
-            where: { id: idUsuario }
-        });
-        res.json({ success: "Se ha modificado el usuario." })
-    } else {
-        res.status(500).json({ "error": "Hubo un error al modificar el usuario" });
-    }
+//     if (nombre && apellido && mail && contraseña && rol) {
+//         await user.update(req.body, {
+//             where: { id: idUsuario }
+//         });
+//         res.json({ success: "Se ha modificado el usuario." })
+//     } else {
+//         res.status(500).json({ "error": "Hubo un error al modificar el usuario" });
+//     }
 
 
-});
+// });
 
 // ingresar como tasker (enviar confirmacion de que es tasker) pru
 
@@ -159,10 +176,17 @@ router.get('/:mailTasker', async (req, res) => {
 // });
 
 
-
-
-
-
-
+// router.put('/:idTasker', validarToken, async (req, res) => {
+router.put('/:idTasker', async (req, res) => {
+    const idTasker = req.params.idTasker;
+    if (idTasker) {
+        await user.update({rol:2}, {
+            where: { id: idTasker }
+        });
+        res.json({ success: "Se generó el alta del tasker" })
+    } else {
+        res.status(500).json({ "error": "Hubo un error al modificar el usuario" });
+    }
+})
 
 module.exports = router;

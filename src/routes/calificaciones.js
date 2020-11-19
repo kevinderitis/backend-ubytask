@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 const fetch = require('node-fetch');
-const { calificacion } = require('../database');
+const { Calificacion } = require('../database');
 // const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 const calificaciones = require('../models/calificaciones');
 const { Op } = require("sequelize")
@@ -13,11 +13,12 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { idSolicitud, idCalificante, idCalificado, comentario } = req.body;
-    if (idSolicitud && idCalificante && idCalificado) {
+    console.log(req.body)
+    const { idSolicitud, idCalificante, idCalificado, comentario, calificacion } = req.body;
+    if (idSolicitud && idCalificante && idCalificado && calificacion) {
         const newCalificacion = { ...req.body };
         try {
-            const idSolProv = await calificacion.max('id');
+            const idSolProv = await Calificacion.max('id');
             var idSolDef
             if(!idSolProv){
                 idSolDef = 1;
@@ -25,15 +26,13 @@ router.post('/', async (req, res) => {
                 idSolDef = idSolProv + 1;
             }
             newCalificacion.id = idSolDef;
-            newCalificacion.estado = 1;
-            const cal = await calificacion.create(newCalificacion);
+            await Calificacion.create(newCalificacion);
         } catch (error) {
             res.send(error);
         }
-
         res.json(newCalificacion);
     } else {
-        res.send({ "rc": 3, "msg": "Error al cargar calificación, compruebe los datos." });
+        res.send({ "rc": 3, "msg": "Error al cargar la calificación, compruebe los datos." });
 
     }
 });
