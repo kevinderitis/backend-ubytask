@@ -41,7 +41,8 @@ router.post('/', async (req, res) => {
 
 router.put('/:addressId',async (req, res) => {
    const addressId = req.params.addressId;
-   const previousAdress = direccion.findAll({ where: { id: idDireccion } });
+   const previousAdress = await direccion.findAll({ where: { id: addressId } });
+   const ACTIVE = 1;
    if(previousAdress){
     await direccion.update(
         {
@@ -49,7 +50,7 @@ router.put('/:addressId',async (req, res) => {
             ubicacion: req.body.ubicacion,
             latitud: req.body.latitud,
             longitud: req.body.longitud,
-            estado: req.body.estado
+            estado: ACTIVE
             
         },
         {
