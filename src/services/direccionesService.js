@@ -32,9 +32,10 @@ async function getAllAddress(){
     return await direccion.findAll();
 }
 
-async function getActiveAddress(){
+async function getActiveAddress(idUsuario){
     const activeAddress = await direccion.findOne({
         where: {
+          idUsuario: idUsuario,  
           estado: 1
         }
     });
@@ -51,8 +52,8 @@ async function getMaxId(){
    }      
 }
 
-async function disablePreviousAddress(){
-    const oldAddress = await getActiveAddress();
+async function disablePreviousAddress(idUsuario){
+    const oldAddress = await getActiveAddress(idUsuario);
     if(oldAddress){
         oldAddress.estado = 0;
         await updateAddress(oldAddress);
