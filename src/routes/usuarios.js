@@ -4,8 +4,21 @@ const { user } = require('../database');
 const { validarToken, validarRolAdmin } = require('../controllers/authController');
 const taskerCategoriaService = require('../services/taskerCategoriasService');
 
-router.get('/', validarToken, validarRolAdmin, async (req, res) => {
+// router.get('/', validarToken, validarRolAdmin, async (req, res) => {
+//     const usuarios = await user.findAll();
+//     res.json(usuarios);
+// });
+
+router.get('/', async (req, res) => {
     const usuarios = await user.findAll();
+    res.json(usuarios);
+});
+
+router.get('/postulaciones', async (req, res) => {
+    // const usuarios = await user.findAll();
+    const usuarios = await user.findAll({
+        where: { rol: 3 }
+    });
     res.json(usuarios);
 });
 
@@ -166,7 +179,7 @@ router.put('/:idTasker', async (req, res) => {
         await user.update({rol:2}, {
             where: { id: idTasker }
         });
-        res.json({ success: "Se ha modificado el usuario." })
+        res.json({ success: "Se generó el alta del tasker" })
     } else {
         res.status(500).json({ "error": "Hubo un error al modificar el usuario" });
     }
