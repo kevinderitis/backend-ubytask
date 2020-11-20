@@ -3,6 +3,7 @@ const router = Router();
 const { user } = require('../database');
 const { validarToken, validarRolAdmin } = require('../controllers/authController');
 const taskerCategoriaService = require('../services/taskerCategoriasService');
+const { Calificacion } = require('../database');
 
 // router.get('/', validarToken, validarRolAdmin, async (req, res) => {
 //     const usuarios = await user.findAll();
@@ -189,4 +190,31 @@ router.put('/:idTasker', async (req, res) => {
     }
 })
 
+router.get('/datosTasker/:idTasker', async (req, res) => {
+    const idTasker = req.params.idTasker
+    const tasker = await user.findAll({where:{id:idTasker}})
+    var datosTasker = {}
+    if(tasker.length > 0){
+        console.log(tasker)
+        //guardar nombre y apellido en un objeto
+        datosTasker.nombre = tasker[0].nombre + ' ' + tasker[0].apellido
+        console.log(datosTasker)
+        //traer calificaciones, calcular promedio y guardar en el obj también
+        datosTasker.prom = await damePromCalificacionesTasker(idTasker)
+        console.log(datosTasker)
+        res.json({datosTasker})
+    }
+    res.json({datosTasker: {}, rta: 'Sin datos' });
+})
+
 module.exports = router;
+
+async function damePromCalificacionesTasker(idTasker){
+    const calificaciones = await Calificacion.findAll({where:{idCalificado:idTasker}})
+    var sumaDeCalificaciones = 0
+    for(let i = 0 ; i < calificaciones.length ; i++){
+        sumaDeCalificaciones += calificaciones[i].calificacion
+    }
+    var prom = sumaDeCalificaciones / calificaciones.length
+    return prom
+}
