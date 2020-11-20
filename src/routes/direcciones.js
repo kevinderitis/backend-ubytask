@@ -24,7 +24,6 @@ router.get('/active/:idUsuario', async (req, res) => {
             longitude: parseFloat(tempDirection.longitud),
             address: tempDirection.ubicacion
         }
-        console.log('direcciones',direccion);
         res.json(direction);
     } catch (error) {
         res.status(500).json({ "error": "Hubo un error al buscar la direccion" });
