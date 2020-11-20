@@ -56,8 +56,9 @@ router.put('/:addressId',async (req, res) => {
    const addressId = req.params.addressId;
    const previousAdress = await direccion.findAll({ where: { id: addressId } });
    const ACTIVE = 1;
+
    if(previousAdress){
-       await direccionesService.disablePreviousAddress(idUsuario);
+       await direccionesService.disablePreviousAddress(req.body.idUsuario);
        await direccion.update(
            {
                idUsuario: req.body.idUsuario,
