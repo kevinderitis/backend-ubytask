@@ -35,11 +35,19 @@ router.post('/', async (req, res) => {
     if (idUsuario && ubicacion && longitud && latitud) {
         const newAddress = { ...req.body };
         try {
+            const existingAdress = await direccionesService.getUserAdress(newAddress);
+            if(!existingAdress){
             const addressMaxId = await direccionesService.getMaxId();
             const addressId = addressMaxId + 1;
             newAddress.id = addressId;
             await direccionesService.disablePreviousAddress(idUsuario);
             const addresses = await direccion.create(newAddress);
+            }else {
+                console.log('existss',existingAdress);
+                newAddress.id = existingAdress[0].dataValues.id;
+                await direccionesService.disablePreviousAddress(idUsuario);
+                await direccionesService.updateAddress(newAddress);
+            }
         } catch (error) {
             console.log(error);
         }
