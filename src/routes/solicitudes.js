@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 const fetch = require('node-fetch');
-const { solicitud, taskerCategoria, categoria } = require('../database');
+const { solicitud, taskerCategoria, categoria, user, Calificacion } = require('../database');
 const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 const solicitudes = require('../models/solicitudes');
 const { Op } = require("sequelize")
@@ -199,6 +199,27 @@ router.get('/pendientes/:idCustomer', async (req, res) => {
     const idCustomer = req.params.idCustomer;
     // const solicitudes = await solicitud.findAll({ where: { customer: idCustomer } })
     const solicitudes = await solicitud.findAll( { where: { [Op.and]: [ { estado: {[Op.in]: [1,2,3] } }, { customer: idCustomer }] } })
+    if(solicitudes.length > 0){
+        for(let i = 0 ; i < solicitudes.length ; i++){
+            // traeme el nombre y promedio del tasker de esta solicitud solicitudes[i]
+            // siempre y cuando el tasker no sea null
+            const idTasker = solicitudes[i].tasker
+            const tasker = await user.findAll({where:{id:idTasker}})
+            var datosTasker = {}
+            if(tasker.length > 0){
+            console.log(tasker)
+            //guardar nombre y apellido en un objeto
+            datosTasker.nombre = tasker[0].nombre + ' ' + tasker[0].apellido
+            console.log(datosTasker)
+            solicitudes[i].dataValues.nombreTasker = datosTasker.nombre
+            //traer calificaciones, calcular promedio y guardar en el obj también
+            datosTasker.prom = await damePromCalificacionesTasker(idTasker)
+            solicitudes[i].dataValues.califTasker = datosTasker.prom
+            console.log(datosTasker)
+            console.log(solicitudes[i])
+            }
+        }
+    }
     res.json(solicitudes);
 });
 
@@ -250,3 +271,13 @@ router.get('/:mailCustomer', async (req, res) => {
 });
 
 module.exports = router;
+
+async function damePromCalificacionesTasker(idTasker){
+    const calificaciones = await Calificacion.findAll({where:{idCalificado:idTasker}})
+    var sumaDeCalificaciones = 0
+    for(let i = 0 ; i < calificaciones.length ; i++){
+        sumaDeCalificaciones += calificaciones[i].calificacion
+    }
+    var prom = sumaDeCalificaciones / calificaciones.length
+    return prom
+}
