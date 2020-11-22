@@ -4,6 +4,7 @@ const fetch = require('node-fetch');
 const { taskerCategoria } = require('../database');
 const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 const {Op} = require('sequelize')
+const taskerCategoriaService = require('../services/taskerCategoriasService');
 // const { taskerCategorias } = require('../database');
 
 router.get('/', async (req, res) => {
@@ -11,6 +12,49 @@ router.get('/', async (req, res) => {
     res.json(taskerCategorias);
 });
 
+router.get('/:id', async (req, res) => {
+    const taskerCategorias = await taskerCategoria.findAll({
+        where: {
+            idTasker: req.params.id
+          }
+    });
+    res.json(taskerCategorias);
+});
+
+router.put('/:idTasker',async(req,res) => {
+try {
+    const selectedCategories = req.body.selectedCategories;
+    const taskerCategorias = await taskerCategoriaService.getTaskerCategoriasById(req.params.idTasker);
+    console.log('taskercategorias',taskerCategorias);
+    let deleteTaskerCategories = taskerCategorias.filter(categorie => {
+        return !selectedCategories.includes(categorie.idCategoria);
+    });
+    console.log('NEWtASKERCATEGORIES',deleteTaskerCategories);
+    let ids = taskerCategorias.map(a => a.idCategoria);
+    let insertTaskerCategorias = selectedCategories.filter( selected => {
+        return !ids.includes(selected);
+    })
+    console.log('insertCat', insertTaskerCategorias);
+    for (let index = 0; index < deleteTaskerCategories.length; index++) {
+        const tc = deleteTaskerCategories[index];
+        await taskerCategoriaService.deleteTaskerCategoria(tc.dataValues.id);
+    }
+    let newTaskerCategoria = {};
+    for (let index = 0; index < insertTaskerCategorias.length; index++) {
+            const categoria = insertTaskerCategorias[index];
+            newTaskerCategoria = {
+                idTasker:req.params.idTasker,
+                idCategoria:categoria
+            }
+            newTaskerCategoria.id = await  taskerCategoriaService.getMaxId() +1
+            const result =  await taskerCategoriaService.crearTaskerCategoria(newTaskerCategoria);
+    }
+  
+    res.json({ success: "Se han modificado las categorias a las que pertenece." })
+} catch (error) {
+    res.status(500).json({ "error": error});
+}
+});
 // router.get('/', async (req, res) => {
 //     const taskerCategorias = await taskerCategorias.findAll();
 //     res.json(taskerCategorias);

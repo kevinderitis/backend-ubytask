@@ -24,6 +24,24 @@ async function getMaxId(){
         return error 
    }      
 }
+async function getTaskerCategoriasById(id){
+    return await taskerCategoria.findAll({
+        where: {
+            idTasker: id
+          }
+    });
+}
+async function deleteTaskerCategoria(id){
+    try {
+       await taskerCategoria.destroy({
+           where: {
+                id:id
+           }
+       });
+    } catch (error) {
+        
+    }
+    }
 
 
-module.exports = {crearTaskerCategoria, getTaskerCategorias, getMaxId};
+module.exports = {crearTaskerCategoria, getTaskerCategorias, getMaxId,getTaskerCategoriasById, deleteTaskerCategoria};
