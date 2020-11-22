@@ -35,7 +35,7 @@ router.get('/:mail', async (req, res) => {
   
 });
 
-router.put('/:idTasker',async(req,res) => {
+router.post('/:idTasker',async(req,res) => {
 try {
     const selectedCategories = req.body.selectedCategories;
     const taskerCategorias = await taskerCategoriaService.getTaskerCategoriasById(req.params.idTasker);
