@@ -274,7 +274,7 @@ router.get('/:mailCustomer', async (req, res) => {
 router.get('/SoliEstado/:id', async (req, res) => {
     const id = req.params.id;
     const solicitudes = await solicitud.findAll({ where: { id: id } })
-    res.json(solicitudes[0].estado);
+    res.json({estado:solicitudes[0].estado});
 });
 
 
