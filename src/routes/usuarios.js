@@ -29,7 +29,16 @@ router.get('/postulaciones', async (req, res) => {
 
 // agregar get user por mail
 
-
+router.get('/tasker/:mail',async (req,res) => {
+    const usuarios = await user.findAll({
+        where: {mail: req.params.mail, rol: 3 }
+    });
+    if(usuarios.length > 0){
+        res.json(usuarios);
+    } else {
+        res.json({rta: 'no es tasker'})
+    }
+});
 
 router.post('/', validarToken, validarRolAdmin, async (req, res) => {
     const { nombre, apellido, mail, contraseña, rol } = req.body;
