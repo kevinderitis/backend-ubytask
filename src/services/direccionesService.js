@@ -39,7 +39,10 @@ async function getActiveAddress(idUsuario){
           estado: 1
         }
     });
-    return activeAddress.dataValues;
+    if(activeAddress){
+        return activeAddress.dataValues;
+    }
+    return null;
 }
 
 async function getMaxId(){
@@ -54,6 +57,7 @@ async function getMaxId(){
 
 async function disablePreviousAddress(idUsuario){
     const oldAddress = await getActiveAddress(idUsuario);
+    console.log('oldAdress',oldAddress);
     if(oldAddress){
         oldAddress.estado = 0;
         await updateAddress(oldAddress);
