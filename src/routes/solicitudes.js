@@ -283,6 +283,16 @@ router.get('/:mailCustomer', async (req, res) => {
     res.json(solicitudes);
 });
 
+
+router.get('/SoliEstado/:id', async (req, res) => {
+    const id = req.params.id;
+    const solicitudes = await solicitud.findAll({ where: { id: id } })
+    res.json({estado:solicitudes[0].estado});
+});
+
+
+
+
 module.exports = router;
 
 async function damePromCalificacionesTasker(idTasker){
