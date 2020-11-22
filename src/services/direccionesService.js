@@ -64,5 +64,18 @@ async function disablePreviousAddress(idUsuario){
     }
 }
 
+async function getUserAdress(address){
+    const existingAdress = await direccion.findAll({
+        where:{
+            idUsuario:address.idUsuario,
+            ubicacion:address.ubicacion
+        }
+    })
+    if(existingAdress.length > 0){
+        return existingAdress;
+    }
+    return null;
+}
 
-module.exports = {createAddress, getAllAddress, getMaxId, getActiveAddress,updateAddress, disablePreviousAddress};
+
+module.exports = {createAddress, getAllAddress, getMaxId, getActiveAddress,updateAddress, disablePreviousAddress,getUserAdress};
