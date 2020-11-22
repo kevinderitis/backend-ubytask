@@ -26,7 +26,8 @@ router.get('/:mail', async (req, res) => {
                 idTasker: usuarios[0].dataValues.id
               }
         });
-        res.json(taskerCategorias);
+        let taskerCategoriasIds = taskerCategorias.map(tc => tc.idCategoria);
+        res.json(taskerCategoriasIds);
     }else {
         res.status(500).json({ "error": 'Verifique los datos'})
     }
