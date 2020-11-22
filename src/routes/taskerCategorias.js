@@ -2,6 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const fetch = require('node-fetch');
 const { taskerCategoria } = require('../database');
+const { user } =require('../database');
 const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 const {Op} = require('sequelize')
 const taskerCategoriaService = require('../services/taskerCategoriasService');
@@ -12,13 +13,25 @@ router.get('/', async (req, res) => {
     res.json(taskerCategorias);
 });
 
-router.get('/:id', async (req, res) => {
-    const taskerCategorias = await taskerCategoria.findAll({
-        where: {
-            idTasker: req.params.id
-          }
+router.get('/:mail', async (req, res) => {
+    const usuarios = await user.findAll({
+        where: { mail: req.params.mail,
+                  rol: 3          
+    }
     });
-    res.json(taskerCategorias);
+    if(usuarios.length > 0){
+        console.log('usuariooooooooooooooo',usuarios[0].dataValues);
+        const taskerCategorias = await taskerCategoria.findAll({
+            where: {
+                idTasker: usuarios[0].dataValues.id
+              }
+        });
+        res.json(taskerCategorias);
+    }else {
+        res.status(500).json({ "error": 'Verifique los datos'})
+    }
+
+  
 });
 
 router.put('/:idTasker',async(req,res) => {
