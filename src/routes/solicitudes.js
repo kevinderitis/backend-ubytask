@@ -131,7 +131,20 @@ router.put('/estado/:idSol', async (req, res) => {
                 res.json({ "rc": 3, "msg": "Error de conexion" })
             }
 
-            break;    
+            break; 
+            
+        case 6:
+            try {
+                // await solicitud.update(req.body, {
+                await solicitud.update({estado:req.body.estado}, {
+                    where: { id: idSol }
+                });
+                res.json({ success: "Se ha modificado solicitud." })
+            } catch (error) {
+                res.json({ "rc": 3, "msg": "Error de conexion" })
+            }
+
+            break; 
 
         default:
             res.json({ "rc": "No se puede modificar el estado" })
