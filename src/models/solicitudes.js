@@ -16,6 +16,7 @@ module.exports = (sequelize, type) => {
             allowNull: true
         },
         ubicacion: type.STRING,
+        motivoCancelacion: type.STRING,
     })
 
 }

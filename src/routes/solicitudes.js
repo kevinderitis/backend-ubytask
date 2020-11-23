@@ -136,9 +136,13 @@ router.put('/estado/:idSol', async (req, res) => {
         case 6:
             try {
                 // await solicitud.update(req.body, {
-                await solicitud.update({estado:req.body.estado}, {
-                    where: { id: idSol }
-                });
+                // await solicitud.update({estado:req.body.estado}, {
+                await solicitud.update(
+                    {
+                        estado:req.body.estado,
+                        motivoCancelacion:req.body.comentario,
+                    },
+                    {where: { id: idSol }});
                 res.json({ success: "Se ha modificado solicitud." })
             } catch (error) {
                 res.json({ "rc": 3, "msg": "Error de conexion" })
