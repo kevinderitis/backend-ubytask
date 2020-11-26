@@ -24,7 +24,8 @@ router.get('/:mail', async (req, res) => {
         console.log('usuariooooooooooooooo',usuarios[0].dataValues);
         const taskerCategorias = await taskerCategoria.findAll({
             where: {
-                idTasker: usuarios[0].dataValues.id
+                idTasker: usuarios[0].dataValues.id,
+                estado: {[Op.in]: [0,1]}
               }
         });
         let taskerCategoriasIds = taskerCategorias.map(tc => tc.idCategoria);
