@@ -15,9 +15,10 @@ router.get('/', async (req, res) => {
 
 router.get('/:mail', async (req, res) => {
     const usuarios = await user.findAll({
-        where: { mail: req.params.mail,
-                  rol: 3          
-    }
+    //     where: { mail: req.params.mail,
+    //               rol: 3          
+    // }
+    where: { [Op.and]: [ {mail: req.params.mail}, { rol: {[Op.in]: [2,3,4] }} ]}
     });
     if(usuarios.length > 0){
         console.log('usuariooooooooooooooo',usuarios[0].dataValues);
