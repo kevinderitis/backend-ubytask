@@ -69,6 +69,12 @@ try {
         newTaskerCategoria.id = await  taskerCategoriaService.getMaxId() +1
         const result =  await taskerCategoriaService.crearTaskerCategoria(newTaskerCategoria);
     }
+    let us = await user.findOne({ where: { id: req.params.idTasker,}});
+    if(us.rol == 4){
+        await user.update({rol:3}, {
+            where: { id: req.params.idTasker }
+        });
+    }
 
     // HABILITO CATEGORIAS QUE ESTABAN DESHABILITADAS
     let taskerCategoriasDeshabilitadas = taskerCategorias.filter(postulacion => {return postulacion.estado == -1})
@@ -83,11 +89,9 @@ try {
     }
 
     const estadoDeMisCategorias = await taskerCategoriaService.getTaskerCategoriasById(req.params.idTasker);
-    let habilitado
+    let habilitado = false
     for(let i = 0; i < estadoDeMisCategorias.length ; i++){
-        if(estadoDeMisCategorias[i].estado == -1){
-            habilitado = false
-        } else {
+        if(estadoDeMisCategorias[i].estado != -1){
             habilitado = true
         }
     }
