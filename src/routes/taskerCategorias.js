@@ -90,7 +90,7 @@ try {
             habilitado = true
         }
     }
-    if(habilitado){
+    if(!habilitado){
         await user.update({rol:4}, {
             where: { id: req.params.idTasker }
         });
