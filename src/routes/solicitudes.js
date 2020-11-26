@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
         const newSolicitud = { ...req.body };
         try {
             const idSolProv = await solicitud.max('id');
-            var idSolDef
+            var idSolDef    
             if(!idSolProv){
                 idSolDef = 1;
             } else {
@@ -249,7 +249,7 @@ router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
     const idTasker = req.params.idTasker;
     //busco el id del tasker en la tabla taskerCategorias, recibo las categorias del tasker
     //busco las solicitudes con estado 1 y de categoria igual a las que recibí recién
-    const categoriasDelTasker = await taskerCategoria.findAll({ where: { idTasker: idTasker } })
+    const categoriasDelTasker = await taskerCategoria.findAll({ where: { idTasker: idTasker, estado: 1 } })
     //console.log(categoriasDelTasker)
     var solicitudesParaElTasker = []
     if (categoriasDelTasker.length > 0) {

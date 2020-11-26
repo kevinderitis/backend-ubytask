@@ -40,28 +40,59 @@ try {
     const selectedCategories = req.body.selectedCategories;
     const taskerCategorias = await taskerCategoriaService.getTaskerCategoriasById(req.params.idTasker);
     console.log('taskercategorias',taskerCategorias);
+
+    // DESHABILITO CATEGORIAS
     let deleteTaskerCategories = taskerCategorias.filter(categorie => {
         return !selectedCategories.includes(categorie.idCategoria);
     });
     console.log('NEWtASKERCATEGORIES',deleteTaskerCategories);
+    for (let index = 0; index < deleteTaskerCategories.length; index++) {
+        const tc = deleteTaskerCategories[index];
+        await taskerCategoriaService.deleteTaskerCategoria(tc.dataValues.id);
+    }
+    // INSERTO CATEGORIAS
     let ids = taskerCategorias.map(a => a.idCategoria);
     let insertTaskerCategorias = selectedCategories.filter( selected => {
         return !ids.includes(selected);
     })
     console.log('insertCat', insertTaskerCategorias);
-    for (let index = 0; index < deleteTaskerCategories.length; index++) {
-        const tc = deleteTaskerCategories[index];
-        await taskerCategoriaService.deleteTaskerCategoria(tc.dataValues.id);
-    }
     let newTaskerCategoria = {};
     for (let index = 0; index < insertTaskerCategorias.length; index++) {
-            const categoria = insertTaskerCategorias[index];
-            newTaskerCategoria = {
-                idTasker:req.params.idTasker,
-                idCategoria:categoria
-            }
-            newTaskerCategoria.id = await  taskerCategoriaService.getMaxId() +1
-            const result =  await taskerCategoriaService.crearTaskerCategoria(newTaskerCategoria);
+        const categoria = insertTaskerCategorias[index];
+        newTaskerCategoria = {
+            idTasker:req.params.idTasker,
+            idCategoria:categoria,
+            estado: 0,
+        }
+        newTaskerCategoria.id = await  taskerCategoriaService.getMaxId() +1
+        const result =  await taskerCategoriaService.crearTaskerCategoria(newTaskerCategoria);
+    }
+
+    // HABILITO CATEGORIAS QUE ESTABAN DESHABILITADAS
+    let taskerCategoriasDeshabilitadas = taskerCategorias.filter(postulacion => {return postulacion.estado == -1})
+    let idsTaskerCategoriasDeshabilitadas = taskerCategoriasDeshabilitadas.map(a => a.idCategoria);
+    let habilitarTaskerCategorias = selectedCategories.filter( selected => {
+        return idsTaskerCategoriasDeshabilitadas.includes(selected);
+    })
+    console.log('habilitarTaskerCategorias', habilitarTaskerCategorias);
+    for (let index = 0; index < habilitarTaskerCategorias.length; index++) {
+        const categoria = habilitarTaskerCategorias[index];
+        await taskerCategoriaService.rehabilitarPostulacion(categoria, req.params.idTasker);
+    }
+
+    const estadoDeMisCategorias = await taskerCategoriaService.getTaskerCategoriasById(req.params.idTasker);
+    let habilitado
+    for(let i = 0; i < estadoDeMisCategorias.length ; i++){
+        if(estadoDeMisCategorias[i].estado == -1){
+            habilitado = false
+        } else {
+            habilitado = true
+        }
+    }
+    if(habilitado){
+        await user.update({rol:4}, {
+            where: { id: req.params.idTasker }
+        });
     }
   
     res.json({ success: "Se han modificado las categorias a las que pertenece." })

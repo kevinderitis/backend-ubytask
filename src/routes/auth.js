@@ -124,7 +124,16 @@ router.post('/signin', async (req, res) => {
                     }catch(error){
                         res.send({error})
 
-                    }        
+                    }
+                case 4:
+                    try{
+                        console.log("CASE 4 ")
+                        idTasker = -2
+                        break;
+                    }catch(error){
+                        res.send({error})
+
+                    }
                     
                                    
             }  

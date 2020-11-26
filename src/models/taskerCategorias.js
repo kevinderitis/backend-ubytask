@@ -7,6 +7,7 @@ module.exports = (sequelize, type) => {
         },
         idTasker: type.INTEGER,
         idCategoria: type.INTEGER,
+        estado: type.INTEGER,
     })
 
 }

@@ -31,9 +31,20 @@ async function getTaskerCategoriasById(id){
           }
     });
 }
+// async function deleteTaskerCategoria(id){
+//     try {
+//        await taskerCategoria.destroy({
+//            where: {
+//                 id:id
+//            }
+//        });
+//     } catch (error) {
+        
+//     }
+// }
 async function deleteTaskerCategoria(id){
     try {
-       await taskerCategoria.destroy({
+       await taskerCategoria.update({estado:-1}, {
            where: {
                 id:id
            }
@@ -41,7 +52,40 @@ async function deleteTaskerCategoria(id){
     } catch (error) {
         
     }
-    }
+}
 
+async function getTaskerCategoriasPostulados(){
+    return await taskerCategoria.findAll({where: {estado: 0}});
+}
 
-module.exports = {crearTaskerCategoria, getTaskerCategorias, getMaxId,getTaskerCategoriasById, deleteTaskerCategoria};
+async function habilitarPostulacion(idPostulacion){
+    await taskerCategoria.update({estado:1}, {
+        where: { id: idPostulacion }
+    });
+}
+
+async function rehabilitarPostulacion(idCategoria, idTasker){
+    await taskerCategoria.update({estado:0}, {
+        where: { idTasker: idTasker, idCategoria: idCategoria }
+    });
+}
+
+async function getTaskerById(idPostulacion){
+    return await taskerCategoria.findOne({
+        where: {
+            id: idPostulacion
+          }
+    });
+}
+
+module.exports = {
+    crearTaskerCategoria
+    , getTaskerCategorias
+    , getMaxId
+    , getTaskerCategoriasById
+    , deleteTaskerCategoria
+    , getTaskerCategoriasPostulados
+    , habilitarPostulacion
+    , getTaskerById
+    , rehabilitarPostulacion
+};

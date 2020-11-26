@@ -3,7 +3,8 @@ const router = Router();
 const { user } = require('../database');
 const { validarToken, validarRolAdmin } = require('../controllers/authController');
 const taskerCategoriaService = require('../services/taskerCategoriasService');
-const { Calificacion } = require('../database');
+const { Calificacion, categoria } = require('../database');
+const { Op } = require("sequelize")
 
 // router.get('/', validarToken, validarRolAdmin, async (req, res) => {
 //     const usuarios = await user.findAll();
@@ -15,23 +16,50 @@ router.get('/', async (req, res) => {
     res.json(usuarios);
 });
 
+// COMENTARIO PARA EMA: Este era el anterior, el de ahora es el de abajo
+// router.get('/postulaciones', async (req, res) => {
+//     // const usuarios = await user.findAll();
+//     const usuarios = await user.findAll({
+//         where: { rol: 3 }
+//     });
+//     if(usuarios.length > 0){
+//         res.json(usuarios);
+//     } else {
+//         res.json({rta: 'Actualmente no hay postulaciones'})
+//     }
+// });
+
 router.get('/postulaciones', async (req, res) => {
-    // const usuarios = await user.findAll();
-    const usuarios = await user.findAll({
-        where: { rol: 3 }
-    });
-    if(usuarios.length > 0){
-        res.json(usuarios);
-    } else {
-        res.json({rta: 'Actualmente no hay postulaciones'})
-    }
+        const postulaciones =  await taskerCategoriaService.getTaskerCategoriasPostulados()
+        const postulados = []
+        var us, cat
+        for(let i = 0 ; i < postulaciones.length ; i++){
+            us = await user.findOne({where: { id: postulaciones[i].dataValues.idTasker }})
+            cat = await categoria.findOne({where: {id: postulaciones[i].dataValues.idCategoria}})
+            let idPost = postulaciones[i].dataValues.id
+            if(us && cat){
+                let postulacion = {}
+                postulacion.idPostulacion = idPost
+                postulacion.idUsuario = us.id
+                postulacion.nombre = us.nombre + ' ' + us.apellido
+                postulacion.mail = us.mail
+                postulacion.categoria = cat.nombre
+                postulados.push(postulacion)
+            }
+        }
+        console.log(postulados)
+        if(postulados.length > 0){
+            res.json(postulados);
+        } else {
+            res.json({rta: 'Actualmente no hay postulaciones'})
+        }
 });
 
 // agregar get user por mail
 
 router.get('/tasker/:mail',async (req,res) => {
     const usuarios = await user.findAll({
-        where: {mail: req.params.mail, rol: 3 }
+        where: { [Op.and]: [ {mail: req.params.mail}, { rol: {[Op.in]: [2,3,4] }} ]}
     });
     if(usuarios.length > 0){
         res.json(usuarios);
@@ -81,12 +109,11 @@ router.post('/tasker', async (req,res) => {
                 const categoria = categorias[index];
                 newTaskerCategoria = {
                     idTasker:newUser.id,
-                    idCategoria:categoria
+                    idCategoria:categoria,
+                    estado: 0,
                 }
                 newTaskerCategoria.id = await  taskerCategoriaService.getMaxId() +1
                 const result =  await taskerCategoriaService.crearTaskerCategoria(newTaskerCategoria);
-                    
-            
             }
         } catch (error) {
             console.log(error);
@@ -185,14 +212,29 @@ router.get('/:mailTasker', async (req, res) => {
 //     }
 // });
 
-
-// router.put('/:idTasker', validarToken, async (req, res) => {
-router.put('/:idTasker', async (req, res) => {
-    const idTasker = req.params.idTasker;
-    if (idTasker) {
+// COMENTARIO PARA EMA: Este era el anterior, el de ahora es el de abajo
+// // router.put('/:idTasker', validarToken, async (req, res) => {
+// router.put('/:idTasker', async (req, res) => {
+//     const idTasker = req.params.idTasker;
+//     if (idTasker) {
+//         await user.update({rol:2}, {
+//             where: { id: idTasker }
+//         });
+//         res.json({ success: "Se generó el alta del tasker" })
+//     } else {
+//         res.status(500).json({ "error": "Hubo un error al modificar el usuario" });
+//     }
+// })
+router.put('/:idPostulacion', async (req, res) => {
+    const idPostulacion = req.params.idPostulacion;
+    if (idPostulacion) {
+        await taskerCategoriaService.habilitarPostulacion(idPostulacion)
+        const postulacion =  await taskerCategoriaService.getTaskerById(idPostulacion)
+        // console.log(postulacion.idTasker)
         await user.update({rol:2}, {
-            where: { id: idTasker }
+            where: { id: postulacion.idTasker }
         });
+        // let us = await user.findOne({where: { id: postulaciones[i].dataValues.idTasker }})
         res.json({ success: "Se generó el alta del tasker" })
     } else {
         res.status(500).json({ "error": "Hubo un error al modificar el usuario" });
