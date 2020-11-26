@@ -250,7 +250,7 @@ router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
     //busco el id del tasker en la tabla taskerCategorias, recibo las categorias del tasker
     //busco las solicitudes con estado 1 y de categoria igual a las que recibí recién
     const categoriasDelTasker = await taskerCategoria.findAll({ where: { idTasker: idTasker, estado: 1 } })
-    //console.log(categoriasDelTasker)
+    // console.log(categoriasDelTasker)
     var solicitudesParaElTasker = []
     if (categoriasDelTasker.length > 0) {
         for (let i = 0; i < categoriasDelTasker.length; i++) {
@@ -269,7 +269,7 @@ router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
             res.json({ rta: 201, solicitudes: solicitudesParaElTasker })
         }
     } else {
-        res.json({ rta: 'No hay categorias para este tasker' })
+        res.json({ rta: 'No hay categorias para este tasker', solicitudes: solicitudesParaElTasker })
     }
 });
 
