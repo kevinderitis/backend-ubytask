@@ -184,6 +184,10 @@ router.get('/:mailTasker', async (req, res) => {
             }else{
                 if(tasker[i].rol == 3){
                     res.json({rta:true , idTasker:-1})
+                }else{
+                    if(tasker[i].rol == 4){
+                        res.json({rta:true , idTasker:-2})
+                    }
                 }
             }
 
