@@ -232,14 +232,19 @@ router.get('/:mailTasker', async (req, res) => {
 router.put('/:idPostulacion', async (req, res) => {
     const idPostulacion = req.params.idPostulacion;
     if (idPostulacion) {
-        await taskerCategoriaService.habilitarPostulacion(idPostulacion)
-        const postulacion =  await taskerCategoriaService.getTaskerById(idPostulacion)
-        // console.log(postulacion.idTasker)
-        await user.update({rol:2}, {
-            where: { id: postulacion.idTasker }
-        });
-        // let us = await user.findOne({where: { id: postulaciones[i].dataValues.idTasker }})
-        res.json({ success: "Se generó el alta del tasker" })
+        // - reviso estado postulación (taskerCategorias): si es -1 no la habilito
+        // - esto porque puede pasar que se confundan de nro de postulación
+        //      y acepten una que no corresponde
+        if(await taskerCategoriaService.getEstadoPostulacion(idPostulacion)){
+            await taskerCategoriaService.habilitarPostulacion(idPostulacion)
+            const postulacion =  await taskerCategoriaService.getTaskerById(idPostulacion)
+            await user.update({rol:2}, {
+                where: { id: postulacion.idTasker }
+            });
+            res.json({ success: "Se generó el alta del tasker" })
+        } else {
+            res.json({ success: "El número de postulación es incorrecto" })
+        }
     } else {
         res.status(500).json({ "error": "Hubo un error al modificar el usuario" });
     }

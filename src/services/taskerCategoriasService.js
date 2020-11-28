@@ -78,14 +78,26 @@ async function getTaskerById(idPostulacion){
     });
 }
 
+async function getEstadoPostulacion(idPostulacion){
+    let postulacionHabilitada = false
+    let postulacion = await taskerCategoria.findOne({
+        where: {id: idPostulacion}
+    })
+    if(postulacion.estado == 0){
+        postulacionHabilitada = true
+    }
+    return postulacionHabilitada
+}
+
 module.exports = {
-    crearTaskerCategoria
-    , getTaskerCategorias
-    , getMaxId
-    , getTaskerCategoriasById
-    , deleteTaskerCategoria
-    , getTaskerCategoriasPostulados
-    , habilitarPostulacion
-    , getTaskerById
-    , rehabilitarPostulacion
+    crearTaskerCategoria,
+    getTaskerCategorias,
+    getMaxId,
+    getTaskerCategoriasById,
+    deleteTaskerCategoria,
+    getTaskerCategoriasPostulados,
+    habilitarPostulacion,
+    getTaskerById,
+    rehabilitarPostulacion,
+    getEstadoPostulacion
 };
