@@ -52,6 +52,8 @@ try {
         const tc = deleteTaskerCategories[index];
         await taskerCategoriaService.deleteTaskerCategoria(tc.dataValues.id);
     }
+    // FIN DESHABILITO
+    
     // INSERTO CATEGORIAS
     let ids = taskerCategorias.map(a => a.idCategoria);
     let insertTaskerCategorias = selectedCategories.filter( selected => {
@@ -75,7 +77,8 @@ try {
             where: { id: req.params.idTasker }
         });
     }
-
+    // FIN INSERTO
+    
     // HABILITO CATEGORIAS QUE ESTABAN DESHABILITADAS
     let taskerCategoriasDeshabilitadas = taskerCategorias.filter(postulacion => {return postulacion.estado == -1})
     let idsTaskerCategoriasDeshabilitadas = taskerCategoriasDeshabilitadas.map(a => a.idCategoria);
@@ -87,19 +90,23 @@ try {
         const categoria = habilitarTaskerCategorias[index];
         await taskerCategoriaService.rehabilitarPostulacion(categoria, req.params.idTasker);
     }
+    // FIN HABILITO
 
+    // CORRIJO ROL SEGÚN STATUS ACTUAL DE MIS CATEGORÍAS
     const estadoDeMisCategorias = await taskerCategoriaService.getTaskerCategoriasById(req.params.idTasker);
     let habilitado = false
     for(let i = 0; i < estadoDeMisCategorias.length ; i++){
-        if(estadoDeMisCategorias[i].estado != -1){
+        if(estadoDeMisCategorias[i].estado != -1 && estadoDeMisCategorias[i].estado != 0){
             habilitado = true
         }
     }
+    // console.log('habilitado: ',habilitado)
     if(!habilitado){
         await user.update({rol:4}, {
             where: { id: req.params.idTasker }
         });
     }
+    // FIN CORRIJO ROL
   
     res.json({ success: "Se han modificado las categorias a las que pertenece." })
 } catch (error) {
