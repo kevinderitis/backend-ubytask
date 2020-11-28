@@ -255,8 +255,21 @@ router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
     if (categoriasDelTasker.length > 0) {
         for (let i = 0; i < categoriasDelTasker.length; i++) {
             let cat = await categoria.findAll({ where: { id: categoriasDelTasker[i].idCategoria } })
-             //console.log(cat)
-            const soli = await solicitud.findAll({ where: { [Op.and]: [{ estado: 1 }, { categoria: cat[0].nombre }] } })
+            //console.log(cat)
+            //busco mi id como customer para filtrarlo en las solicitudes
+            let usuarioTasker = await user.findOne({where: {id: idTasker}})
+            // console.log(usuario.dataValues.mail)
+            let usuarioCustomer = await user.findOne({where: {mail: usuarioTasker.dataValues.mail}})
+            // console.log(usuarioCustomer.dataValues.id)
+            const soli = await solicitud.findAll({
+                where: {
+                    [Op.and]: [
+                        { estado: 1 },
+                        { categoria: cat[0].nombre },
+                        { customer: { [Op.ne]: usuarioCustomer.dataValues.id } },
+                    ]
+                }
+            })
             //console.log(soli)
             for (let j = 0; j< soli.length; j ++){
                 if(soli[j] != null) solicitudesParaElTasker.push(soli[j])
