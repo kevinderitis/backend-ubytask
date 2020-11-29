@@ -30,41 +30,41 @@ router.get('/', async (req, res) => {
 // });
 
 router.get('/postulaciones', async (req, res) => {
-        const postulaciones =  await taskerCategoriaService.getTaskerCategoriasPostulados()
-        const postulados = []
-        var us, cat
-        for(let i = 0 ; i < postulaciones.length ; i++){
-            us = await user.findOne({where: { id: postulaciones[i].dataValues.idTasker }})
-            cat = await categoria.findOne({where: {id: postulaciones[i].dataValues.idCategoria}})
-            let idPost = postulaciones[i].dataValues.id
-            if(us && cat){
-                let postulacion = {}
-                postulacion.idPostulacion = idPost
-                postulacion.idUsuario = us.id
-                postulacion.nombre = us.nombre + ' ' + us.apellido
-                postulacion.mail = us.mail
-                postulacion.categoria = cat.nombre
-                postulados.push(postulacion)
-            }
+    const postulaciones = await taskerCategoriaService.getTaskerCategoriasPostulados()
+    const postulados = []
+    var us, cat
+    for (let i = 0; i < postulaciones.length; i++) {
+        us = await user.findOne({ where: { id: postulaciones[i].dataValues.idTasker } })
+        cat = await categoria.findOne({ where: { id: postulaciones[i].dataValues.idCategoria } })
+        let idPost = postulaciones[i].dataValues.id
+        if (us && cat) {
+            let postulacion = {}
+            postulacion.idPostulacion = idPost
+            postulacion.idUsuario = us.id
+            postulacion.nombre = us.nombre + ' ' + us.apellido
+            postulacion.mail = us.mail
+            postulacion.categoria = cat.nombre
+            postulados.push(postulacion)
         }
-        console.log(postulados)
-        if(postulados.length > 0){
-            res.json(postulados);
-        } else {
-            res.json({rta: 'Actualmente no hay postulaciones'})
-        }
+    }
+    console.log(postulados)
+    if (postulados.length > 0) {
+        res.json(postulados);
+    } else {
+        res.json({ rta: 'Actualmente no hay postulaciones' })
+    }
 });
 
 // agregar get user por mail
 
-router.get('/tasker/:mail',async (req,res) => {
+router.get('/tasker/:mail', async (req, res) => {
     const usuarios = await user.findAll({
-        where: { [Op.and]: [ {mail: req.params.mail}, { rol: {[Op.in]: [2,3,4] }} ]}
+        where: { [Op.and]: [{ mail: req.params.mail }, { rol: { [Op.in]: [2, 3, 4] } }] }
     });
-    if(usuarios.length > 0){
+    if (usuarios.length > 0) {
         res.json(usuarios);
     } else {
-        res.json({rta: 'no es tasker'})
+        res.json({ rta: 'no es tasker' })
     }
 });
 
@@ -89,7 +89,7 @@ router.post('/', validarToken, validarRolAdmin, async (req, res) => {
 
 });
 
-router.post('/tasker', async (req,res) => {
+router.post('/tasker', async (req, res) => {
     const { nombre, apellido, mail, rol, categorias, contraseña } = req.body;
     if (nombre && apellido && mail && rol && categorias) {
         const newUser = {
@@ -107,13 +107,20 @@ router.post('/tasker', async (req,res) => {
             let newTaskerCategoria = {};
             for (let index = 0; index < categorias.length; index++) {
                 const categoria = categorias[index];
+                const idTaskerCategoriaMax = await taskerCategoriaService.getMaxId()
+                let idTaskerCategoria
+                if (!idTaskerCategoriaMax) {
+                    idTaskerCategoria = 1
+                } else {
+                    idTaskerCategoria = idTaskerCategoriaMax + 1
+                }
                 newTaskerCategoria = {
-                    idTasker:newUser.id,
-                    idCategoria:categoria,
+                    id: idTaskerCategoria,
+                    idTasker: newUser.id,
+                    idCategoria: categoria,
                     estado: 0,
                 }
-                newTaskerCategoria.id = await  taskerCategoriaService.getMaxId() +1
-                const result =  await taskerCategoriaService.crearTaskerCategoria(newTaskerCategoria);
+                const result = await taskerCategoriaService.crearTaskerCategoria(newTaskerCategoria);
             }
         } catch (error) {
             console.log(error);
@@ -174,30 +181,30 @@ router.get('/ingresatasker/:iduser', async (req, res) => {
 
 router.get('/:mailTasker', async (req, res) => {
     const mailABuscar = req.params.mailTasker
-    const tasker = await user.findAll({where:{mail:mailABuscar}})
-    
-    if(tasker.length > 0){
+    const tasker = await user.findAll({ where: { mail: mailABuscar } })
+
+    if (tasker.length > 0) {
         console.log(tasker)
-        for(let i=0; i < tasker.length;i++){
-            if(tasker[i].rol == 2){
-               res.json({rta:true , idTasker:tasker[i].id})
-            }else{
-                if(tasker[i].rol == 3){
-                    res.json({rta:true , idTasker:-1})
-                }else{
-                    if(tasker[i].rol == 4){
-                        res.json({rta:true , idTasker:-2})
+        for (let i = 0; i < tasker.length; i++) {
+            if (tasker[i].rol == 2) {
+                res.json({ rta: true, idTasker: tasker[i].id })
+            } else {
+                if (tasker[i].rol == 3) {
+                    res.json({ rta: true, idTasker: -1 })
+                } else {
+                    if (tasker[i].rol == 4) {
+                        res.json({ rta: true, idTasker: -2 })
                     }
                 }
             }
 
         }
-        res.json({rta:false });
+        res.json({ rta: false });
         // res.json(tasker);
-       // res.json({rta:true,idTasker:tasker[0].id});
+        // res.json({rta:true,idTasker:tasker[0].id});
     } else {
         // res.json({msj:'El mail no es de un tasker'})
-        res.json({rta:false, });
+        res.json({ rta: false, });
     }
 });
 
@@ -235,10 +242,10 @@ router.put('/:idPostulacion', async (req, res) => {
         // - reviso estado postulación (taskerCategorias): si es -1 no la habilito
         // - esto porque puede pasar que se confundan de nro de postulación
         //      y acepten una que no corresponde
-        if(await taskerCategoriaService.getEstadoPostulacion(idPostulacion)){
+        if (await taskerCategoriaService.getEstadoPostulacion(idPostulacion)) {
             await taskerCategoriaService.habilitarPostulacion(idPostulacion)
-            const postulacion =  await taskerCategoriaService.getTaskerById(idPostulacion)
-            await user.update({rol:2}, {
+            const postulacion = await taskerCategoriaService.getTaskerById(idPostulacion)
+            await user.update({ rol: 2 }, {
                 where: { id: postulacion.idTasker }
             });
             res.json({ success: "Se generó el alta del tasker" })
@@ -252,9 +259,9 @@ router.put('/:idPostulacion', async (req, res) => {
 
 router.get('/datosTasker/:idTasker', async (req, res) => {
     const idTasker = req.params.idTasker
-    const tasker = await user.findAll({where:{id:idTasker}})
+    const tasker = await user.findAll({ where: { id: idTasker } })
     var datosTasker = {}
-    if(tasker.length > 0){
+    if (tasker.length > 0) {
         console.log(tasker)
         //guardar nombre y apellido en un objeto
         datosTasker.nombre = tasker[0].nombre + ' ' + tasker[0].apellido
@@ -262,17 +269,17 @@ router.get('/datosTasker/:idTasker', async (req, res) => {
         //traer calificaciones, calcular promedio y guardar en el obj también
         datosTasker.prom = await damePromCalificacionesTasker(idTasker)
         console.log(datosTasker)
-        res.json({datosTasker})
+        res.json({ datosTasker })
     }
-    res.json({datosTasker: {}, rta: 'Sin datos' });
+    res.json({ datosTasker: {}, rta: 'Sin datos' });
 })
 
 module.exports = router;
 
-async function damePromCalificacionesTasker(idTasker){
-    const calificaciones = await Calificacion.findAll({where:{idCalificado:idTasker}})
+async function damePromCalificacionesTasker(idTasker) {
+    const calificaciones = await Calificacion.findAll({ where: { idCalificado: idTasker } })
     var sumaDeCalificaciones = 0
-    for(let i = 0 ; i < calificaciones.length ; i++){
+    for (let i = 0; i < calificaciones.length; i++) {
         sumaDeCalificaciones += calificaciones[i].calificacion
     }
     var prom = sumaDeCalificaciones / calificaciones.length
