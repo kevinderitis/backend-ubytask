@@ -38,7 +38,12 @@ router.post('/', async (req, res) => {
             const existingAdress = await direccionesService.getUserAdress(newAddress);
             if(!existingAdress){
             const addressMaxId = await direccionesService.getMaxId();
-            const addressId = addressMaxId + 1;
+            let addressId
+            if(!addressMaxId){
+                addressId = 1
+            } else {
+                addressId = addressMaxId + 1
+            }
             newAddress.id = addressId;
             await direccionesService.disablePreviousAddress(idUsuario);
             const addresses = await direccion.create(newAddress);
