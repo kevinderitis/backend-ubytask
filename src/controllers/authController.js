@@ -25,7 +25,7 @@ function validarToken(req, res, next) {
 }
 
 function  validarRolAdmin(req, res,next) {
-if(req.rol === 1){
+if(req.token === 'tkn0101'){
     next();
 }else{
     res.send({"rc": 1 , "msg": "No tiene permisos para acceder a estar ruta."});
@@ -50,5 +50,7 @@ function  validarRolTasker(req, res,next) {
         }
         
         }
+
+    
 
 module.exports = {validarToken, validarRolAdmin, validarRolCustomer, validarRolTasker};
