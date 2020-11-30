@@ -35,7 +35,7 @@ router.get('/categorias/:id', validarToken, async (req, res) => {
 });
 
 
-router.post('/', validarToken, async (req, res) => {
+router.post('/', async (req, res) => {
     const { customer, categoria, descripcion, latitud, longitud, ubicacion } = req.body;
     if (customer && categoria && descripcion && latitud && longitud && ubicacion) {
         const newSolicitud = { ...req.body };
@@ -169,7 +169,7 @@ router.put('/estado/:idSol', validarToken, async (req, res) => {
     // }
 });
 
-router.put('/modificar/:idSol', validarToken, async (req, res) => {
+router.put('/modificar/:idSol', async (req, res) => {
     const idSol = req.params.idSol;
     const solicitudAModificar = solicitud.findAll({ where: { id: idSol } })
     if (solicitudAModificar) {
@@ -205,14 +205,14 @@ router.delete('/:idSol', validarToken, async (req, res) => {
     }
 });
 
-router.get('/:idCustomer', validarToken, async (req, res) => {
+router.get('/:idCustomer', async (req, res) => {
     const idCustomer = req.params.idCustomer;
     const solicitudes = await solicitud.findAll({ where: { customer: idCustomer } })
     res.json(solicitudes);
 });
 
 //  SOLITUDES EN ESTADO 1 2 y 3 : PENDIENTE , CON TASKER  y FINALIZADA 
-router.get('/pendientes/:idCustomer',validarToken , async (req, res) => {
+router.get('/pendientes/:idCustomer' , async (req, res) => {
     const idCustomer = req.params.idCustomer;
     // const solicitudes = await solicitud.findAll({ where: { customer: idCustomer } })
     const solicitudes = await solicitud.findAll({ where: { [Op.and]: [{ estado: { [Op.in]: [1, 2, 3] } }, { customer: idCustomer }] } })

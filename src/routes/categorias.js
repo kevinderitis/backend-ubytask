@@ -3,7 +3,7 @@ const router = Router();
 const { categoria } = require('../database');
 const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 
-router.get('/', validarToken, async (req, res) => {
+router.get('/', async (req, res) => {
     const categorias = await categoria.findAll();
     res.json(categorias);
 });

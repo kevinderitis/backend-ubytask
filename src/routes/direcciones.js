@@ -6,7 +6,7 @@ const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = 
 const { Op } = require('sequelize')
 const direccionesService = require('../services/direccionesService');
 
-router.get('/:idUsuario', validarToken, async (req, res) => {
+router.get('/:idUsuario', async (req, res) => {
     console.log('iduser', req.params.idUsuario);
     const direcciones = await direccion.findAll({
         where: {
@@ -16,7 +16,7 @@ router.get('/:idUsuario', validarToken, async (req, res) => {
     console.log('direcciones', direcciones);
     res.json(direcciones);
 });
-router.get('/active/:idUsuario', validarToken, async (req, res) => {
+router.get('/active/:idUsuario', async (req, res) => {
     try {
         const tempDirection = await direccionesService.getActiveAddress(req.params.idUsuario)
         const direction = {
@@ -30,7 +30,7 @@ router.get('/active/:idUsuario', validarToken, async (req, res) => {
     }
 
 });
-router.post('/', validarToken, async (req, res) => {
+router.post('/', async (req, res) => {
     const { idUsuario, ubicacion, longitud, latitud } = req.body;
     if (idUsuario && ubicacion && longitud && latitud) {
         const newAddress = { ...req.body };
@@ -65,7 +65,7 @@ router.post('/', validarToken, async (req, res) => {
 
 });
 
-router.put('/:addressId', validarToken, async (req, res) => {
+router.put('/:addressId', async (req, res) => {
     const addressId = req.params.addressId;
     const previousAdress = await direccion.findAll({ where: { id: addressId } });
     const ACTIVE = 1;
