@@ -14,8 +14,9 @@ module.exports = (sequelize, type) => {
         tasker: {
             type: type.INTEGER,
             allowNull: true
-        }
-
+        },
+        ubicacion: type.STRING,
+        motivoCancelacion: type.STRING,
     })
 
 }

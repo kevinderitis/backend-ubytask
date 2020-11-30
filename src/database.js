@@ -4,7 +4,8 @@ const solicitudes = require('./models/solicitudes');
 const categorias = require('./models/categorias');
 const estados = require('./models/estados');
 const taskerCategorias = require('./models/taskerCategorias');
-
+const calificaciones = require('./models/calificaciones');
+const direcciones = require('./models/direcciones');
 const sequelize = new Sequelize('ubytask', 'sa', 'Vadigu2020DEV', {
   host: '200.73.130.147',
   dialect: 'mssql',
@@ -33,6 +34,8 @@ const solicitud = solicitudes(sequelize, Sequelize);
 const categoria = categorias(sequelize, Sequelize);
 const estado = estados(sequelize, Sequelize);
 const taskerCategoria = taskerCategorias(sequelize, Sequelize);
+const Calificacion = calificaciones(sequelize, Sequelize);
+const direccion = direcciones(sequelize, Sequelize);
 sequelize.sync({force: false})
 .then(()=>{
   console.log('Tablas sincronizadas');
@@ -44,7 +47,9 @@ module.exports = {
   user,
   solicitud,
   categoria,
-  taskerCategoria
+  taskerCategoria,
+  Calificacion,
+  direccion
 };
 
 

@@ -1,12 +1,14 @@
 module.exports = (sequelize, type) => {
-    return sequelize.define('taskerCategorias', {
+    return sequelize.define('direcciones', {
         id: {
             type: type.INTEGER,
             primaryKey: true,
             autoincrement: true
         },
-        idTasker: type.INTEGER,
-        idCategoria: type.INTEGER,
+        idUsuario: type.INTEGER,
+        ubicacion: type.STRING,
+        latitud: type.STRING,
+        longitud: type.STRING,
         estado: type.INTEGER,
     })
 
