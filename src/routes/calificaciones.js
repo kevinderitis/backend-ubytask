@@ -4,15 +4,16 @@ const fetch = require('node-fetch');
 const { Calificacion } = require('../database');
 // const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 const calificaciones = require('../models/calificaciones');
-const { Op } = require("sequelize")
+const { Op } = require("sequelize");
+const { validarToken } = require('../controllers/authController');
 
 
-router.get('/', async (req, res) => {
+router.get('/', validarToken, async (req, res) => {
     const calificaciones = await calificaciones.findAll();
     res.json(calificaciones);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', validarToken, async (req, res) => {
     console.log(req.body)
     const { idSolicitud, idCalificante, idCalificado, comentario, calificacion } = req.body;
     if (idSolicitud && idCalificante && idCalificado && calificacion) {
@@ -20,7 +21,7 @@ router.post('/', async (req, res) => {
         try {
             const idSolProv = await Calificacion.max('id');
             var idSolDef
-            if(!idSolProv){
+            if (!idSolProv) {
                 idSolDef = 1;
             } else {
                 idSolDef = idSolProv + 1;

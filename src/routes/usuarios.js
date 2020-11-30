@@ -11,7 +11,7 @@ const { Op } = require("sequelize")
 //     res.json(usuarios);
 // });
 
-router.get('/', async (req, res) => {
+router.get('/', validarToken, async (req, res) => {
     const usuarios = await user.findAll();
     res.json(usuarios);
 });
@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
 //     }
 // });
 
-router.get('/postulaciones', async (req, res) => {
+router.get('/postulaciones', validarToken, async (req, res) => {
     const postulaciones = await taskerCategoriaService.getTaskerCategoriasPostulados()
     const postulados = []
     var us, cat
@@ -57,7 +57,7 @@ router.get('/postulaciones', async (req, res) => {
 
 // agregar get user por mail
 
-router.get('/tasker/:mail', async (req, res) => {
+router.get('/tasker/:mail', validarToken, async (req, res) => {
     const usuarios = await user.findAll({
         where: { [Op.and]: [{ mail: req.params.mail }, { rol: { [Op.in]: [2, 3, 4] } }] }
     });
@@ -89,7 +89,7 @@ router.post('/', validarToken, validarRolAdmin, async (req, res) => {
 
 });
 
-router.post('/tasker', async (req, res) => {
+router.post('/tasker', validarToken, async (req, res) => {
     const { nombre, apellido, mail, rol, categorias, contraseña } = req.body;
     if (nombre && apellido && mail && rol && categorias) {
         const newUser = {
@@ -166,7 +166,7 @@ router.delete('/:idUser', validarToken, validarRolAdmin, async (req, res) => {
 
 // ingresar como tasker (enviar confirmacion de que es tasker) pru
 
-router.get('/ingresatasker/:iduser', async (req, res) => {
+router.get('/ingresatasker/:iduser', validarToken, async (req, res) => {
     const iduser = req.params.iduser;
     const usuario = await user.findAll({
         where: { "id": iduser }
@@ -179,7 +179,7 @@ router.get('/ingresatasker/:iduser', async (req, res) => {
     }
 });
 
-router.get('/:mailTasker', async (req, res) => {
+router.get('/:mailTasker', validarToken, async (req, res) => {
     const mailABuscar = req.params.mailTasker
     const tasker = await user.findAll({ where: { mail: mailABuscar } })
 
@@ -236,7 +236,7 @@ router.get('/:mailTasker', async (req, res) => {
 //         res.status(500).json({ "error": "Hubo un error al modificar el usuario" });
 //     }
 // })
-router.put('/:idPostulacion', async (req, res) => {
+router.put('/:idPostulacion', validarToken, async (req, res) => {
     const idPostulacion = req.params.idPostulacion;
     if (idPostulacion) {
         // - reviso estado postulación (taskerCategorias): si es -1 no la habilito
@@ -257,7 +257,7 @@ router.put('/:idPostulacion', async (req, res) => {
     }
 })
 
-router.get('/datosTasker/:idTasker', async (req, res) => {
+router.get('/datosTasker/:idTasker', validarToken, async (req, res) => {
     const idTasker = req.params.idTasker
     const tasker = await user.findAll({ where: { id: idTasker } })
     var datosTasker = {}

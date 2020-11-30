@@ -7,12 +7,12 @@ const solicitudes = require('../models/solicitudes');
 const { Op } = require("sequelize")
 
 
-router.get('/', async (req, res) => {
+router.get('/', validarToken, async (req, res) => {
     const solicitudes = await solicitud.findAll();
     res.json(solicitudes);
 });
 
-router.get('/solTasker/:idTasker', async (req, res) => {
+router.get('/solTasker/:idTasker', validarToken, async (req, res) => {
     const idtask = req.params.idTasker;
     const solicitudes = await solicitud.findAll({
         where: { tasker: idtask }
@@ -21,7 +21,7 @@ router.get('/solTasker/:idTasker', async (req, res) => {
 });
 
 
-router.get('/categorias/:id', async (req, res) => {
+router.get('/categorias/:id', validarToken, async (req, res) => {
     const idcategoria = req.params.id;
     let solicitudes = "";
     try {
@@ -35,14 +35,14 @@ router.get('/categorias/:id', async (req, res) => {
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/', validarToken, async (req, res) => {
     const { customer, categoria, descripcion, latitud, longitud, ubicacion } = req.body;
     if (customer && categoria && descripcion && latitud && longitud && ubicacion) {
         const newSolicitud = { ...req.body };
         try {
             const idSolProv = await solicitud.max('id');
-            var idSolDef    
-            if(!idSolProv){
+            var idSolDef
+            if (!idSolProv) {
                 idSolDef = 1;
             } else {
                 idSolDef = idSolProv + 1;
@@ -61,10 +61,10 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/estado/:idSol', async (req, res) => {
+router.put('/estado/:idSol', validarToken, async (req, res) => {
     const idSol = req.params.idSol;
     const { estado } = req.body;
-    
+
 
     const result = await solicitud.findAll({
         where: { id: idSol }
@@ -77,10 +77,10 @@ router.put('/estado/:idSol', async (req, res) => {
             if (estadoactual === 1 || estadoactual === 4) {
                 try {
                     // await solicitud.update(req.body, {
-                    await solicitud.update({estado:req.body.estado}, {
+                    await solicitud.update({ estado: req.body.estado }, {
                         where: { id: idSol }
                     });
-                    await solicitud.update({tasker:req.body.idTasker}, {
+                    await solicitud.update({ tasker: req.body.idTasker }, {
                         where: { id: idSol }
                     });
                     res.json({ success: "Se ha modificado solicitud." })
@@ -96,7 +96,7 @@ router.put('/estado/:idSol', async (req, res) => {
             if (estadoactual === 2) {
                 try {
                     // await solicitud.update(req.body, {
-                    await solicitud.update({estado:req.body.estado}, {
+                    await solicitud.update({ estado: req.body.estado }, {
                         where: { id: idSol }
                     });
                     res.json({ success: "Se ha modificado solicitud." })
@@ -111,7 +111,7 @@ router.put('/estado/:idSol', async (req, res) => {
         case 4:
             try {
                 // await solicitud.update(req.body, {
-                await solicitud.update({estado:req.body.estado}, {
+                await solicitud.update({ estado: req.body.estado }, {
                     where: { id: idSol }
                 });
                 res.json({ success: "Se ha modificado solicitud." })
@@ -123,7 +123,7 @@ router.put('/estado/:idSol', async (req, res) => {
         case 5:
             try {
                 // await solicitud.update(req.body, {
-                await solicitud.update({estado:req.body.estado}, {
+                await solicitud.update({ estado: req.body.estado }, {
                     where: { id: idSol }
                 });
                 res.json({ success: "Se ha modificado solicitud." })
@@ -131,24 +131,24 @@ router.put('/estado/:idSol', async (req, res) => {
                 res.json({ "rc": 3, "msg": "Error de conexion" })
             }
 
-            break; 
-            
+            break;
+
         case 6:
             try {
                 // await solicitud.update(req.body, {
                 // await solicitud.update({estado:req.body.estado}, {
                 await solicitud.update(
                     {
-                        estado:req.body.estado,
-                        motivoCancelacion:req.body.comentario,
+                        estado: req.body.estado,
+                        motivoCancelacion: req.body.comentario,
                     },
-                    {where: { id: idSol }});
+                    { where: { id: idSol } });
                 res.json({ success: "Se ha modificado solicitud." })
             } catch (error) {
                 res.json({ "rc": 3, "msg": "Error de conexion" })
             }
 
-            break; 
+            break;
 
         default:
             res.json({ "rc": "No se puede modificar el estado" })
@@ -169,7 +169,7 @@ router.put('/estado/:idSol', async (req, res) => {
     // }
 });
 
-router.put('/modificar/:idSol', async (req, res) => {
+router.put('/modificar/:idSol', validarToken, async (req, res) => {
     const idSol = req.params.idSol;
     const solicitudAModificar = solicitud.findAll({ where: { id: idSol } })
     if (solicitudAModificar) {
@@ -193,7 +193,7 @@ router.put('/modificar/:idSol', async (req, res) => {
 
 
 
-router.delete('/:idSol', validarRolAdmin, async (req, res) => {
+router.delete('/:idSol', validarToken, async (req, res) => {
     const idSol = req.params.idSol;
     if (idSol) {
         await solicitud.destroy({
@@ -205,35 +205,35 @@ router.delete('/:idSol', validarRolAdmin, async (req, res) => {
     }
 });
 
-router.get('/:idCustomer', async (req, res) => {
+router.get('/:idCustomer', validarToken, async (req, res) => {
     const idCustomer = req.params.idCustomer;
     const solicitudes = await solicitud.findAll({ where: { customer: idCustomer } })
     res.json(solicitudes);
 });
 
- //  SOLITUDES EN ESTADO 1 2 y 3 : PENDIENTE , CON TASKER  y FINALIZADA 
-router.get('/pendientes/:idCustomer', async (req, res) => {
+//  SOLITUDES EN ESTADO 1 2 y 3 : PENDIENTE , CON TASKER  y FINALIZADA 
+router.get('/pendientes/:idCustomer',validarToken , async (req, res) => {
     const idCustomer = req.params.idCustomer;
     // const solicitudes = await solicitud.findAll({ where: { customer: idCustomer } })
-    const solicitudes = await solicitud.findAll( { where: { [Op.and]: [ { estado: {[Op.in]: [1,2,3] } }, { customer: idCustomer }] } })
-    if(solicitudes.length > 0){
-        for(let i = 0 ; i < solicitudes.length ; i++){
+    const solicitudes = await solicitud.findAll({ where: { [Op.and]: [{ estado: { [Op.in]: [1, 2, 3] } }, { customer: idCustomer }] } })
+    if (solicitudes.length > 0) {
+        for (let i = 0; i < solicitudes.length; i++) {
             // traeme el nombre y promedio del tasker de esta solicitud solicitudes[i]
             // siempre y cuando el tasker no sea null
             const idTasker = solicitudes[i].tasker
-            const tasker = await user.findAll({where:{id:idTasker}})
+            const tasker = await user.findAll({ where: { id: idTasker } })
             var datosTasker = {}
-            if(tasker.length > 0){
-            console.log(tasker)
-            //guardar nombre y apellido en un objeto
-            datosTasker.nombre = tasker[0].nombre + ' ' + tasker[0].apellido
-            console.log(datosTasker)
-            solicitudes[i].dataValues.nombreTasker = datosTasker.nombre
-            //traer calificaciones, calcular promedio y guardar en el obj también
-            datosTasker.prom = await damePromCalificacionesTasker(idTasker)
-            solicitudes[i].dataValues.califTasker = datosTasker.prom
-            console.log(datosTasker)
-            console.log(solicitudes[i])
+            if (tasker.length > 0) {
+                console.log(tasker)
+                //guardar nombre y apellido en un objeto
+                datosTasker.nombre = tasker[0].nombre + ' ' + tasker[0].apellido
+                console.log(datosTasker)
+                solicitudes[i].dataValues.nombreTasker = datosTasker.nombre
+                //traer calificaciones, calcular promedio y guardar en el obj también
+                datosTasker.prom = await damePromCalificacionesTasker(idTasker)
+                solicitudes[i].dataValues.califTasker = datosTasker.prom
+                console.log(datosTasker)
+                console.log(solicitudes[i])
             }
         }
     }
@@ -245,7 +245,7 @@ router.get('/pendientes/:idCustomer', async (req, res) => {
 
 // Me tiene que devolver las solicitudes con mis servicios
 // Modificar para hacer una sola vez las consultas
-router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
+router.get('/solicitudesPendientes/:idTasker',validarToken, async (req, res) => {
     const idTasker = req.params.idTasker;
     //busco el id del tasker en la tabla taskerCategorias, recibo las categorias del tasker
     //busco las solicitudes con estado 1 y de categoria igual a las que recibí recién
@@ -257,9 +257,9 @@ router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
             let cat = await categoria.findAll({ where: { id: categoriasDelTasker[i].idCategoria } })
             //console.log(cat)
             //busco mi id como customer para filtrarlo en las solicitudes
-            let usuarioTasker = await user.findOne({where: {id: idTasker}})
+            let usuarioTasker = await user.findOne({ where: { id: idTasker } })
             // console.log(usuario.dataValues.mail)
-            let usuarioCustomer = await user.findOne({where: {mail: usuarioTasker.dataValues.mail}})
+            let usuarioCustomer = await user.findOne({ where: { mail: usuarioTasker.dataValues.mail } })
             // console.log(usuarioCustomer.dataValues.id)
             const soli = await solicitud.findAll({
                 where: {
@@ -271,10 +271,10 @@ router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
                 }
             })
             //console.log(soli)
-            for (let j = 0; j< soli.length; j ++){
-                if(soli[j] != null) solicitudesParaElTasker.push(soli[j])
+            for (let j = 0; j < soli.length; j++) {
+                if (soli[j] != null) solicitudesParaElTasker.push(soli[j])
             }
-            
+
         }
         if (solicitudesParaElTasker.length > 0) {
             res.json({ rta: 200, solicitudes: solicitudesParaElTasker })
@@ -288,10 +288,10 @@ router.get('/solicitudesPendientes/:idTasker', async (req, res) => {
 
 
 
-router.get('/SoliEstado/:id', async (req, res) => {
+router.get('/SoliEstado/:id',validarToken, async (req, res) => {
     const id = req.params.id;
     const solicitudes = await solicitud.findAll({ where: { id: id } })
-    res.json({estado:solicitudes[0].estado});
+    res.json({ estado: solicitudes[0].estado });
 });
 
 
@@ -299,10 +299,10 @@ router.get('/SoliEstado/:id', async (req, res) => {
 
 module.exports = router;
 
-async function damePromCalificacionesTasker(idTasker){
-    const calificaciones = await Calificacion.findAll({where:{idCalificado:idTasker}})
+async function damePromCalificacionesTasker(idTasker) {
+    const calificaciones = await Calificacion.findAll({ where: { idCalificado: idTasker } })
     var sumaDeCalificaciones = 0
-    for(let i = 0 ; i < calificaciones.length ; i++){
+    for (let i = 0; i < calificaciones.length; i++) {
         sumaDeCalificaciones += calificaciones[i].calificacion
     }
     var prom = sumaDeCalificaciones / calificaciones.length
