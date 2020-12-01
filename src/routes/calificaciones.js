@@ -16,7 +16,8 @@ router.get('/', validarToken, async (req, res) => {
 router.post('/', validarToken, async (req, res) => {
     console.log(req.body)
     const { idSolicitud, idCalificante, idCalificado, comentario, calificacion } = req.body;
-    if (idSolicitud && idCalificante && idCalificado && calificacion) {
+    console.log(calificacion)
+    if (idSolicitud && idCalificante && idCalificado) {
         const newCalificacion = { ...req.body };
         try {
             const idSolProv = await Calificacion.max('id');
