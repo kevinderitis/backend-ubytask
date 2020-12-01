@@ -6,6 +6,7 @@ function validarToken(req, res, next) {
         const bearer = bearerHeader.split(' ');
         const bearerToken = bearer[1];
         req.token = bearerToken;
+        // console.log(req.token)
         // next();
     } else {
         res.sendStatus(403);
@@ -15,8 +16,8 @@ function validarToken(req, res, next) {
         if (err) {
             res.send({"rc":0, "msg": "token invalido"});
         } else {
-        
-            req.rol = authData.usuario[0].rol;
+            console.log('authData',authData)
+            req.rol = authData.usuarios[0].rol;
            
             next();
         }
