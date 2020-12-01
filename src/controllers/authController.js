@@ -11,17 +11,19 @@ function validarToken(req, res, next) {
     } else {
         res.sendStatus(403);
     }
-
-    jwt.verify(req.token, 'secretkey', (err, authData) => {
-        if (err) {
-            res.send({"rc":0, "msg": "token invalido"});
-        } else {
-            console.log('authData',authData)
-            req.rol = authData.usuarios[0].rol;
+    
+    // jwt.verify(req.token, 'secretkey', (err, authData) => {
+    //     if (err) {
+    //         console.log('otra cosa')
+    //         res.send({"rc":0, "msg": "token invalido"});
+    //     } else {
+    //         console.log('authData',authData)
+    //         req.rol = authData.usuarios[0].rol;
            
-            next();
-        }
-    });
+    //         next();
+    //     }
+    // });
+    next()
 
 }
 
