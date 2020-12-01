@@ -58,17 +58,19 @@ router.post('/login', async (req, res) => {
 
 router.post('/signin', async (req, res) => {
     const { nombre, apellido, mail, contraseña } = req.body;
-    var idCustomer = null 
-    var idTasker = null 
+    var idCustomer = null
+    var idTasker = null
 
     const nuevoUsuario = {}
     const usuarios = await user.findAll({
         where: { "mail": req.body.mail }
     });
-    
+
     const ultimoid = await user.max('id');
     console.log(usuarios.length)
 
+    var tk
+    console.log('creo la variable', tk)
     if (usuarios.length === 0) {
 
         if(!ultimoid){
@@ -83,14 +85,27 @@ router.post('/signin', async (req, res) => {
         nuevoUsuario.rol = 1;
         try {
             await user.create(nuevoUsuario);
-            res.send( {idCustomer:nuevoUsuario.id, idTasker:idTasker});
+            
+            tk = await callJwt(nuevoUsuario)
+            console.log('creando el usuario', tk)
+            res.send( {idCustomer:nuevoUsuario.id, idTasker:idTasker, tokenUser: tk});
         } catch (error) {
             res.send({ "rc": 1, "msg": "Error de conexion" });
         }
 
         res.send({ "rc": 4, "msg": "Compruebe los datos ingresados, puede que el usuario exista o falte alguno." })
     }else{
-        
+        tk = await callJwt(usuarios)
+        // jwt.sign({ usuarios }, 'secretkey', async function (err, token) {
+        //     // res.json({
+        //     //     token
+        //     // });
+        //     // console.log('imprimo token', token)
+        //     tk = await token
+        //     // console.log('imprimo tk', tk)
+        //     // return token
+        // });
+        console.log('ya sali del jwt', tk)
         for(let i = 0; i < usuarios.length; i++){
             
             let rol = usuarios[i].rol
@@ -140,12 +155,30 @@ router.post('/signin', async (req, res) => {
           
            }
 
-        res.send({idCustomer:idCustomer,idTasker:idTasker})
+        res.send({idCustomer:idCustomer,idTasker:idTasker, tokenUser: tk})
         
 
        
     }
 });
+
+async function callJwt(usuarios){
+    var tk = new Promise((resolve, reject) => {
+        jwt.sign({ usuarios }, 'secretkey', (err, token) => {
+            if (err) reject(err);
+            else resolve(token)
+            // res.json({
+            //     token
+            // });
+            // console.log('imprimo token', token)
+            // tk = await token
+            // console.log('imprimo tk', tk)
+            // return token
+        });
+    })
+    console.log('retornando tk', tk)
+    return tk
+}
 
 router.get('/', validarToken, (req, res) => {
     jwt.verify(req.token, 'secretkey', (err, authData) => {
