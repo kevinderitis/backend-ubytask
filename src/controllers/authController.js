@@ -7,7 +7,7 @@ function validarToken(req, res, next) {
         const bearerToken = bearer[1];
         req.token = bearerToken;
         // console.log(req.token)
-        // next();
+        next();
     } else {
         res.sendStatus(403);
     }
@@ -23,7 +23,7 @@ function validarToken(req, res, next) {
     //         next();
     //     }
     // });
-    next()
+    // await next()
 
 }
 

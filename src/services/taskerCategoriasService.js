@@ -83,7 +83,7 @@ async function getEstadoPostulacion(idPostulacion){
     let postulacion = await taskerCategoria.findOne({
         where: {id: idPostulacion}
     })
-    if(postulacion.estado == 0){
+    if(postulacion && postulacion.estado == 0){
         postulacionHabilitada = true
     }
     return postulacionHabilitada
