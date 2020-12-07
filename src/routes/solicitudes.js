@@ -285,10 +285,10 @@ function dameFecha(fecha) {
     var horaAux = fecha.getHours()
     var hora
     if (segsAux < 10) {
-        let aux = horaAux + 3
+        let aux = horaAux
         hora = '0' + aux
     } else {
-        hora = horaAux + 3
+        hora = horaAux
     }
     var minutosAux = fecha.getMinutes()
     var minutos
