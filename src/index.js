@@ -21,6 +21,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/taskerCategorias', require('./routes/taskerCategorias'));
 app.use('/api/calificaciones', require('./routes/calificaciones'));
 app.use('/api/direcciones', require('./routes/direcciones'));
+app.use('/api/ubicacionesTaskers', require('./routes/ubicacionesTaskers'));
 //Starting server
 app.listen(app.get('port'), () =>{
 console.log('Server on port');
