@@ -4,7 +4,8 @@ const fetch = require('node-fetch');
 const { solicitud, taskerCategoria, categoria, user, Calificacion } = require('../database');
 const { validarToken, validarRolTasker, validarRolCustomer, validarRolAdmin } = require('../controllers/authController');
 const solicitudes = require('../models/solicitudes');
-const { Op } = require("sequelize")
+const { Op } = require("sequelize");
+// const { substring } = require('sequelize/types/lib/operators');
 
 
 router.get('/', validarToken, async (req, res) => {
@@ -212,7 +213,7 @@ router.get('/:idCustomer', validarToken, async (req, res) => {
 });
 
 //  SOLITUDES EN ESTADO 1 2 y 3 : PENDIENTE , CON TASKER  y FINALIZADA 
-router.get('/pendientes/:idCustomer',validarToken , async (req, res) => {
+router.get('/pendientes/:idCustomer', validarToken, async (req, res) => {
     const idCustomer = req.params.idCustomer;
     // const solicitudes = await solicitud.findAll({ where: { customer: idCustomer } })
     const solicitudes = await solicitud.findAll({ where: { [Op.and]: [{ estado: { [Op.in]: [1, 2, 3] } }, { customer: idCustomer }] } })
@@ -240,12 +241,80 @@ router.get('/pendientes/:idCustomer',validarToken , async (req, res) => {
     res.json(solicitudes);
 });
 
+router.get('/historicoCustomer/:idCustomer', validarToken, async (req, res) => {
+    const idCustomer = req.params.idCustomer;
+    const solicitudes = await solicitud.findAll({ where: { customer: idCustomer } })
+    if (solicitudes.length > 0) {
+        for (let i = 0; i < solicitudes.length; i++) {
+            // traeme el nombre del tasker de esta solicitud solicitudes[i]
+            // siempre y cuando el tasker no sea null
+            const idTasker = solicitudes[i].tasker
+            const tasker = await user.findAll({ where: { id: idTasker } })
+            var datosTasker = {}
+            if (tasker.length > 0) {
+                console.log(tasker)
+                //guardar nombre y apellido en un objeto
+                datosTasker.nombre = tasker[0].nombre + ' ' + tasker[0].apellido
+                console.log(datosTasker)
+                solicitudes[i].dataValues.nombreTasker = datosTasker.nombre
+                console.log(datosTasker)
+                console.log(solicitudes[i])
+            }
+            // mejoro formato fecha creación y finalización
+            const fecCr = solicitudes[i].dataValues.createdAt
+            const fecFi = solicitudes[i].dataValues.updatedAt
+            const fecCreacion = dameFecha(fecCr)
+            const fecFinalizacion = dameFecha(fecFi)
+            solicitudes[i].dataValues.fechaCreacion = fecCreacion
+            solicitudes[i].dataValues.fechaFinalizacion = fecFinalizacion
+        }
+    }
+    res.json(solicitudes);
+});
+
+function dameFecha(fecha) {
+    var mesAux = fecha.getMonth()
+    var mes = mesAux + 1
+    var diaAux = fecha.getDate()
+    var dia
+    if (diaAux < 10) {
+        dia = '0' + diaAux
+    } else {
+        dia = diaAux
+    }
+    var horaAux = fecha.getHours()
+    var hora
+    if (segsAux < 10) {
+        let aux = horaAux + 3
+        hora = '0' + aux
+    } else {
+        hora = horaAux + 3
+    }
+    var minutosAux = fecha.getMinutes()
+    var minutos
+    if (minutosAux < 10) {
+        minutos = '0' + minutosAux
+    } else {
+        minutos = minutosAux
+    }
+    var segsAux = fecha.getSeconds()
+    var segundos
+    if (segsAux < 10) {
+        segundos = '0' + segsAux
+    } else {
+        segundos = segsAux
+    }
+    const fechaFinal =
+        dia + '/' + mes + '/' + fecha.getFullYear() + ' ' + hora + ':' + minutos + ':' + segundos
+    return fechaFinal
+}
+
 
 
 
 // Me tiene que devolver las solicitudes con mis servicios
 // Modificar para hacer una sola vez las consultas
-router.get('/solicitudesPendientes/:idTasker',validarToken, async (req, res) => {
+router.get('/solicitudesPendientes/:idTasker', validarToken, async (req, res) => {
     const idTasker = req.params.idTasker;
     //busco el id del tasker en la tabla taskerCategorias, recibo las categorias del tasker
     //busco las solicitudes con estado 1 y de categoria igual a las que recibí recién
@@ -288,7 +357,7 @@ router.get('/solicitudesPendientes/:idTasker',validarToken, async (req, res) => 
 
 
 
-router.get('/SoliEstado/:id',validarToken, async (req, res) => {
+router.get('/SoliEstado/:id', validarToken, async (req, res) => {
     const id = req.params.id;
     const solicitudes = await solicitud.findAll({ where: { id: id } })
     res.json({ estado: solicitudes[0].estado });
